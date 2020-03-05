@@ -16,6 +16,7 @@ Collate:
     'eff_models.R'
     'npq_models.R'
     'misc_fluorescence.R'
+    'light_curvesO2.R'
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
