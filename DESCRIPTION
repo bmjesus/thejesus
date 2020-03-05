@@ -1,0 +1,25 @@
+Package: thejesus
+Type: Package
+Title: Package with miscelanous functions used by Bruno Jesus (University of Nantes)
+Version: 0.1.0
+Author: Bruno Jesus
+Maintainer: Bruno Jesus <bruno.jesus@univ-nantes.fr>
+Description: Package with miscelanous functions used by Bruno Jesus (University of Nantes). It includes functions to: fit ETR-Irradiances curves and NPQ-irradiance curves; calculate 2nd derivative spectra from reflectace spectra; Import data from OceanOptics spectroradiometers; ETR, YNPQ, YNO, NPQ, etc...
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    minpack.lm,
+    stats
+Collate:
+    'etr_models.R'
+    'eff_models.R'
+    'npq_models.R'
+    'misc_fluorescence.R'
+RoxygenNote: 6.1.1
+Roxygen: list(markdown = TRUE)
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
