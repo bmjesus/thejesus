@@ -25,6 +25,16 @@ light_curvesO2<-function(a="./",light_time){
   #remove last column
   matriz_O2<-matriz_O2[,-30]
 
+#if the decimal separator is a ',' (e.g. French computer) then the data is not numeric
+# added a step to replace ',' by '.' and convert it to numeric format
+
+  matriz_O2$ch1_O2<-gsub(",",".",  matriz_O2$ch1_O2)
+  matriz_O2$time_s<-gsub(",",".",  matriz_O2$time_s)
+
+  matriz_O2$ch1_O2<-as.numeric(matriz_O2$ch1_O2)
+  matriz_O2$time_s<-as.numeric(matriz_O2$time_s)
+
+  #str(matriz_O2)
 
 #######################################################################
   #plotting the data and the selected time ranges

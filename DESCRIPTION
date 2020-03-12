@@ -10,13 +10,17 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     minpack.lm,
-    stats
+    stats,
+    lubridate,
+    tidyr
 Collate:
     'etr_models.R'
     'eff_models.R'
     'npq_models.R'
     'misc_fluorescence.R'
     'light_curvesO2.R'
+    'read_ooptics.R'
+    'reflectance_indices.R'
 RoxygenNote: 6.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
