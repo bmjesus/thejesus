@@ -19,7 +19,6 @@ Collate:
     'npq_models.R'
     'misc_fluorescence.R'
     'light_curvesO2.R'
-    'read_ooptics.R'
     'reflectance_indices.R'
     'read_asd.R'
     'd2.R'
