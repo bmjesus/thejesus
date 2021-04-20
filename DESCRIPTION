@@ -21,7 +21,9 @@ Collate:
     'light_curvesO2.R'
     'read_ooptics.R'
     'reflectance_indices.R'
-RoxygenNote: 6.1.1
+    'read_asd.R'
+    'd2.R'
+RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,

@@ -4,12 +4,15 @@
 \alias{light_curvesO2}
 \title{Function to fit PI models to O2 data from the FireSting (Pyroscience)}
 \usage{
-light_curvesO2(a = "./", light_time)
+light_curvesO2(a = "./", light_time, num_rows = 13)
 }
 \arguments{
 \item{a}{File with the O2 data}
 
 \item{light_time}{Dataframe with one column with light data, one column with the starting times and one column with the finishing times}
+}
+\value{
+
 }
 \description{
 Function to fit PI models to O2 data from the FireSting (Pyroscience)

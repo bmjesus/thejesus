@@ -4,8 +4,7 @@
 \alias{fit_npq}
 \title{Function to fit NPQ model}
 \usage{
-fit_npq(light, npq, starting_values = NULL, num_obs = NULL,
-  plots = TRUE)
+fit_npq(light, npq, starting_values = NULL, num_obs = NULL, plots = TRUE)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}

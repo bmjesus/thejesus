@@ -4,8 +4,15 @@
 \alias{fit_etr}
 \title{Function to fit PI models using ETR data and extract fitting parameters}
 \usage{
-fit_etr(light, etr, model, starting_values = NULL, num_obs = NULL,
-  plots = TRUE, alpha_lm = FALSE)
+fit_etr(
+  light,
+  etr,
+  model,
+  starting_values = NULL,
+  num_obs = NULL,
+  plots = TRUE,
+  alpha_lm = FALSE
+)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}

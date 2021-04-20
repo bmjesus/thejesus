@@ -188,6 +188,7 @@ if(is.na(my.res[1])==FALSE){
                                   paste("ETRmax = ",round(app.data$etrmax,0)),
                                   paste("Ek = ",round(app.data$Ek,0)))
          ,bty="n")
+  print("The model converged")
 }else{
   legend("bottomright",legend ="The model did not converge, please choose different starting values"
          ,bty="n",cex=0.7)
@@ -198,8 +199,13 @@ if(is.na(my.res[1])==FALSE){
 ##Return results
 ################################################################################
 
+#adding original ETR and PAR values as a dataframe to the output list
+
+original_values<-as.data.frame(cbind(light,etr))
+app.data$original_values<-original_values
+
 if(is.na(my.res[1])==FALSE){
 return(app.data)
-}
+}else{return("The model did not converge, please choose different starting values")}
 
 }

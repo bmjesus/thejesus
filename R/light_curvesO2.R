@@ -7,14 +7,14 @@
 #' @export
 
 
-light_curvesO2<-function(a="./",light_time){
+light_curvesO2<-function(a="./",light_time,num_rows=13){
 
   #######################################################################
   #read the O2 file
   #######################################################################
 
   #import and skip the 13 lines of comments, data separated by Tab
-  matriz_O2<-read.table(a,skip=13,header=T,sep="\t")
+  matriz_O2<-read.table(a,skip=num_rows,header=T,sep="\t")
 
   #replace names for something more obvious
   names (matriz_O2)<-c("date","time","time_s","comment","ch1_O2","ch2_O2","ch3_O2","ch4_O2",

@@ -4,8 +4,15 @@
 \alias{fit_eff}
 \title{Function to fit PI models using PSII efficiency data and extract fitting parameters}
 \usage{
-fit_eff(light, eff, model, starting_values = NULL, num_obs = NULL,
-  plots = TRUE, alpha_lm = FALSE)
+fit_eff(
+  light,
+  eff,
+  model,
+  starting_values = NULL,
+  num_obs = NULL,
+  plots = TRUE,
+  alpha_lm = FALSE
+)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}

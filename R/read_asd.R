@@ -1,5 +1,5 @@
-#' @title Function to read reflectance spectra from the Ocean Optics machine (text format)
-#' @description Function to read reflectance spectra from the Ocean Optics machine (text format)
+#' @title Function to read reflectance spectra from the ASD machine (text format)
+#' @description Function to read reflectance spectra from the ASD machine (text format)
 #' @param filename path to the file to import (text vector)
 #' @param plot parameter to activate plotting (default = TRUE)
 #' @param indices parameter to activating calculating indices (default = FALSE)
@@ -8,13 +8,14 @@
 #' @export
 
 
-read_ooptics<-function(filename="./",plot=TRUE, indices=FALSE){
+read_asd<-function(filename="./",plot=TRUE, indices=FALSE){
 
 #read file
 #the files can have different row numbers depending on the machine used
 #so the function will look for markers to know how many lines to skip and when to stop
 
 data_raw<-scan(filename,sep='\t',character(0),quiet=TRUE)
+
 
 #a copy for the metadata
 data_raw2<-data_raw
@@ -24,10 +25,12 @@ data_raw2<-data_raw
 data_raw<-gsub(",",".",data_raw)
 
 #data_sep <- which(data_raw=="^>>>>>")
-data_start <- grep(pattern="^>>>>>Begin",x=data_raw)+1
+data_start <- grep(pattern="^Wavelength",x=data_raw)+2
 
 #some files have a marker at the end. others not...
-data_end <- grep(pattern="^>>>>>End",x=data_raw)-1
+#data_end <- grep(pattern="^>>>>>End",x=data_raw)-1
+
+data_end<-length(data_raw)
 
 #extracting just the wavelengths and reflectance
 if (length(data_end)!=0){
@@ -82,29 +85,26 @@ filename<-basename(filename)
 
 #store all the metadata inside a dataframe
 
-data_raw2<-data_raw2[1:(data_start-1)]
+data_raw2<-data_raw2[1:(data_start-2)]
 
-if (data_raw2[2]=="++++++++++++++++++++++++++++++++++++"){
-  data_raw2<-data_raw2[3:(length(data_raw2)-1)]
-}else{
-  data_raw2<-data_raw2[2:(length(data_raw2)-1)]
-}
+#if (data_raw2[2]=="++++++++++++++++++++++++++++++++++++"){
+#  data_raw2<-data_raw2[3:(length(data_raw2)-1)]
+#}else{
+#  data_raw2<-data_raw2[2:(length(data_raw2)-1)]
+#}
 
-data_raw2<-as.data.frame(data_raw2)
+metadata<-as.list(data_raw2)
 
-metadata<-tidyr::separate(data = data_raw2, col = data_raw2, into = c("parameter", "value"), sep = ": ")
+#metadata<-tidyr::separate(data = data_raw2, col = data_raw2, into = c("parameter", "value"), sep = ": ")
 
 
 #print(metadata)
 
 #store date and time in separate object to make easier to produce time-series
 #this seems to work in my MacBook but not on my Linux, confirm and debug
-#datetime<-lubridate::parse_date_time(metadata[1,2],orders = "abdTY")
 
-#the previous method was not working so I decided to store the data in text
-#format and let the user sort it out at a later stage
+datetime<-lubridate::parse_date_time(metadata[[5]],orders = "abdTY")
 
-datetime<-metadata[1,2]
 
 ###############################################################################
 ###############################################################################
