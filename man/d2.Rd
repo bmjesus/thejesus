@@ -4,7 +4,7 @@
 \alias{d2}
 \title{Function to calculate second derivatives from reflectance spectra}
 \usage{
-d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance)
+d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance, plots = TRUE)
 }
 \arguments{
 \item{w}{reflectance values}

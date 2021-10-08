@@ -27,15 +27,28 @@ mpbom<-function(wl,reflectance,xmin,xmax){
   points(reflectance$wl,Rb,type='l',col=1,lty=2)
   points(reflectance$wl[reflectance$wl>xmin&reflectance$wl<xmax],
          predict(lm_mpb),type='l',col=2,lty=1)
-  trans<-sqrt(Ra/Rb)
-  par(mar=c(0,4,0,1))
-  plot(reflectance$wl,trans,col=1,type='l',
-       ylab='Transmitance',xlab='',las=1,xaxt='n')
-  par(mar=c(4,4,0,1))
-  alpha <- -log(trans^(1/3))
-  plot(reflectance$wl,alpha,col=1,type='l',
-       ylab='Alpha',xlab='wl',las=1)
-  abline(h=0)
+  if (any((Ra/Rb<0)==TRUE)){
+    trans<-rep(NA,length(reflectance$wl))
+    alpha<-rep(NA,length(reflectance$wl))
+    par(mar=c(0,4,0,1))
+    plot(reflectance$wl, reflectance$reflectance,type='n')
+    par(mar=c(4,4,0,1))
+    plot(reflectance$wl,reflectance$reflectance,type='n')
+    print("Impossible to fit MPBOM")
+  }else{
+    trans<-sqrt(Ra/Rb)
+    par(mar=c(0,4,0,1))
+    plot(reflectance$wl,trans,col=1,type='l',
+         ylab='Transmitance',xlab='',las=1,xaxt='n')
+    par(mar=c(4,4,0,1))
+    alpha <- -log(trans^(1/3))
+    plot(reflectance$wl,alpha,col=1,type='l',
+         ylab='Alpha',xlab='wl',las=1)
+    abline(h=0)
+
+  }
+
+
 
   #building a dataframe with the output data
 

@@ -5,26 +5,28 @@
 #' @param knots smoothing parameter for the loess function (default = 0.08)
 #' @param reflectance optional parameter to preview the effect of smoothing on the reflectance data (default=FALSE)
 #' @param smooth_reflectance (default = 0.08)
+#' @para plots parameter to turn off plotting, default TRUE
 #' @return a list with two dataframes: one with the original data and another with the derivative values
 #' @keywords external
 #' @export
 
-d2<-function (wl,w,knots=0.08,reflectance=FALSE, smooth_reflectance)
+d2<-function (wl,w,knots=0.08,reflectance=FALSE, smooth_reflectance, plots=TRUE)
 {
 
 #Add an optional smoothing parameter for the reflectance data
 #Add a way of looking just at the reflectance data to test the reflectance smoothing parameters
 
 if (reflectance==TRUE){
-
+  if (plots==TRUE){
 plot(wl,w,ylab="reflectance",xlab="Wavelengths",
      pch=21,bg=1,type = 'l')
-
+}
 alisa<-loess(w~wl,span = smooth_reflectance)
 pred<-predict(alisa,wl)
 
+if (plots==TRUE){
 points(wl,pred,type='l',col=2)
-
+}
 
 #assigning the smoothed reflectance values the new w
 w<-pred
@@ -87,6 +89,7 @@ norm<-pred/w[-c(1,length(w))]
 
 
 ###############################################################################
+if (plots==TRUE){
 
   #plotting section
   plot(wl,w,type="l",ylim=c(pmin,pmax),
@@ -100,15 +103,18 @@ norm<-pred/w[-c(1,length(w))]
 
   for (v in 1:(length(norm)-2))
   {
-    if((norm[v+1]>norm[v]&norm[v+2]<norm[v+1]) || (norm[v+1]<norm[v]&norm[v+2]>norm[v+1]))
+    if(norm[v+1]>norm[v]&norm[v+2]<norm[v+1])
+    #if((norm[v+1]>norm[v]&norm[v+2]<norm[v+1]) || (norm[v+1]<norm[v]&norm[v+2]>norm[v+1]))
+
     {
       #abline(v=x[v+1])
-      segments(x[v],0,x[v],(pmax-pmin)*((norm[v+1]-smin)/(smax-smin))+pmin)
+      #segments(x[v],0,x[v],(pmax-pmin)*((norm[v+1]-smin)/(smax-smin))+pmin)
       text(x[v+1],(pmax-pmin)*((norm[v+1]-smin)/(smax-smin))+pmin,labels=round(x[v+1],0),pos=3,cex=0.8)
 
     }
   }
 
+}
 ###############################################################################
 
 

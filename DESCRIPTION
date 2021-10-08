@@ -23,6 +23,7 @@ Collate:
     'read_asd.R'
     'd2.R'
     'mpbom.R'
+    'growth_curve.R'
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
