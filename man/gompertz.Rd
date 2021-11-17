@@ -4,7 +4,7 @@
 \alias{gompertz}
 \title{Fit growth curve model to cell counts}
 \usage{
-gompertz(days, cells, A, umax, l)
+gompertz(days, cells, A, umax, l, log = TRUE)
 }
 \arguments{
 \item{days}{numerical vector with the time information}
@@ -16,6 +16,8 @@ gompertz(days, cells, A, umax, l)
 \item{umax}{number with an estimation of "umax" starting value for the model fit}
 
 \item{l}{number with an estimation of "l" starting value for the model fit}
+
+\item{log}{TRUE/FALSE value to specify if data is in log scale. Default TRUE}
 }
 \value{
 A list with 3 dataframes: parameters, model and original. The dataframe "parameters" contains the
