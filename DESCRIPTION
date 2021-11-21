@@ -24,6 +24,7 @@ Collate:
     'd2.R'
     'mpbom.R'
     'growth_curve.R'
+    'read_ooptics.R'
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 

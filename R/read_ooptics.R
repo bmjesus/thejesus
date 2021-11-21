@@ -67,8 +67,8 @@ if (plot==TRUE){
 #  the min and max between 400 and 900
 min_y<-min(all_data$reflect[all_data$wl>=400&all_data$wl<=900])
 max_y<-max(all_data$reflect[all_data$wl>=400&all_data$wl<=900])
-  plot(all_data$wl,all_data$reflect,xlab='wavelength',ylab = 'reflectance',
-       ylim=c(min_y,max_y),pch=21,cex=0.7,bg=1)
+  plot(all_data$wl,all_data$reflect,xlab='Wavelength',ylab = 'Reflectance',
+       ylim=c(min_y,max_y),pch=21,cex=0.7,bg=1,las=1,type="l")
   if (indices==TRUE){
     legend("topleft",legend=round(ndvi_value,2))
   }
