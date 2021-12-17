@@ -117,7 +117,7 @@ if(model == 'P'){
 if(model == 'EP'){
 
   if (is.null(starting_values)==TRUE){
-    starting_values=list(alpha = 0.4, etrmax = 40, Eopt=150)
+    starting_values = starting_values
   }
 
   my.res <- tryCatch({
@@ -133,8 +133,8 @@ if(model == 'EP'){
     coefs <- stats::coef(my.res)
 
     my.alpha <- as.numeric(coefs[1])
-    my.etrmax <- as.numeric(coefs[2])
-    my.eopt <- as.numeric(coefs[3])
+    my.eopt <- as.numeric(coefs[2])
+    my.etrmax <- as.numeric(coefs[3])
 
     #run predict to get fit line
     new.dat <- data.frame(light=seq(0,max(light), by=1))
@@ -188,7 +188,7 @@ if(is.na(my.res[1])==FALSE){
                                   paste("ETRmax = ",round(app.data$etrmax,0)),
                                   paste("Ek = ",round(app.data$Ek,0)))
          ,bty="n")
-  print("The model converged")
+  print("The ETR model converged")
 }else{
   legend("bottomright",legend ="The model did not converge, please choose different starting values"
          ,bty="n",cex=0.7)
