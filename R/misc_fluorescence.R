@@ -175,3 +175,55 @@ eff <- function(f,fm){
 }
 
 
+##############################################################################
+#Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
+##############################################################################
+
+#' @title
+#' @description
+#' @param f fluorescence yield
+#' @param fm maximum fluorescence yield
+#' @return
+#' @keywords external
+#' @export
+sigma_Fvp_Fmp<-function(sigmaPSII,sigmaPSIIp, Fo, Fop, Fm, Fp, Fmp,
+                        overlay = FALSE,
+                        pch = NULL, bg = NULL){
+
+  Fv <- (Fm - Fo)/Fm
+
+  Fvp <- (Fmp - Fop)/Fmp
+
+  F_ratio <- Fvp/Fv
+
+  sigma_ratio <- sigmaPSIIp/sigmaPSII
+
+  output<-as.data.frame(cbind(F_ratio,sigma_ratio))
+
+  names(output) <- c("F_ratio","sigma_ratio")
+
+
+  if (overlay==FALSE){
+    plot(F_ratio, sigma_ratio, pch = pch, bg = bg,xlim = c(0,1), ylim = c(0,1)
+         ,ylab = "Sigma' 2s / Sigma", xlab = ("Fv'/Fm' / Fv/Fm"))
+    abline(0,1)
+  }else{
+    points(F_ratio, sigma_ratio, pch = pch, bg = bg )
+    abline(0,1)
+  }
+
+
+
+  return(output)
+
+}
+
+
+
+
+##############################################################################
+
+
+##############################################################################
+
+##############################################################################

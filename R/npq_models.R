@@ -143,17 +143,17 @@ fit_npq_2021<-function(light,npq,
   }
 
 
-  df<-data.frame(cbind(light,npq))
+  df<-data.frame(cbind(light,npq),stringsAsFactors=FALSE)
 
   if (is.null(starting_values)==TRUE){
-    starting_values = list(NPQo=0.1,NPQmax=1,E50=400,hill=1,Kd=0.01,C=0)
+    starting_values = list(NPQo=npq[1],NPQmax=max(npq),E50=max(light)/2,hill=1,Kd=0.01,C=0)
   }
 
 
   npq_sim<-tryCatch({minpack.lm::nlsLM(npq~(NPQo*exp(-Kd*light) + NPQmax*(light^hill/(E50^hill + light^hill)) - C)
                              ,start=starting_values
                              , data=df
-                             ,lower = c(0,0,0,0,0,0),upper = c(npq[1],Inf,Inf,Inf,Inf,Inf))},error=function(e){NaN}
+                             ,lower = c(0,0,0,0,0,-Inf),upper = c(Inf,Inf,Inf,Inf,Inf,Inf))},error=function(e){NaN}
   )
 
   ################################################################################

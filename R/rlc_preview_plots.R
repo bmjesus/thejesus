@@ -2,7 +2,7 @@
 #' @description  Preview of RLC curves and associated parameters
 #' @param x rlc object from the process_psi() function
 #' @return the fitted values for several PI models
-#' @export 
+#' @export
 #' @keywords external
 rlc_analysis<-function(x,starting_values=list(alpha = 0.5, Eopt = 500, etrmax = 100),
                        model = NULL
@@ -11,24 +11,24 @@ rlc_analysis<-function(x,starting_values=list(alpha = 0.5, Eopt = 500, etrmax = 
 ###############################################################################
 #variables and parameters section
 ###############################################################################
-  
+
 #calculating the variables
-  
-#light  
+
+#light
 par<-x$data$measuring_steps$par
 
 #number of light steps
 n_light<-length(x$data$measuring_steps$par)
 
-#measurement type (light or after 2 seconds of dark, i.e., light, dark)  
-type<-c(rep("light",n_light),rep("dark",n_light))  
+#measurement type (light or after 2 seconds of dark, i.e., light, dark)
+type<-c(rep("light",n_light),rep("dark",n_light))
 
 
 #PSII quantum efficiency values
 eff<-x$sti_parameters$psII_eff_sti
 
 #relative ETR
-retr <- par * eff 
+retr <- par * eff
 
 
 #NPQ
@@ -84,7 +84,7 @@ ynpqm<-c( ynpqm_light, ynpqm_dark )
 #Fv_Fm_dark<-(fmm_dark-f_dark)/fmm_dark
 
 Fv_Fm_light<-eff[1:n_light]
-  
+
 Fv_Fm_dark<-eff[(1 + n_light):(n_light * 2)]
 
 
@@ -92,7 +92,7 @@ sigma_p_light<-x$sti_parameters$sigma_sti[1:n_light]
 sigma_light<-sigma_p_light[1]
 
 sigma_p_dark<-x$sti_parameters$sigma_sti[(1 + n_light):(n_light * 2)]
-sigma_dark<-sigma_p_dark[1]  
+sigma_dark<-sigma_p_dark[1]
 
 sigma<-c(sigma_p_light,sigma_p_dark)
 
@@ -122,18 +122,18 @@ rho_se_dark<-x$sti_parameters$rho_se_sti[(1 + n_light):(n_light * 2)]
 
 #relative ETR, EP model
 
-retr_ep_light<-tryCatch({fit_etr(par,retr[1:n_light],model="EP",
+retr_ep_light<-tryCatch({thejesus::fit_etr(par,retr[1:n_light],model="EP",
                                  starting_values = starting_values)},error=function(e){
   print("Error: could not fit model rETR light");
   return(NULL)
 })
-  
+
 
 
 #print(retr_ep_light)
 
-  
-retr_ep_dark<-tryCatch({fit_etr(par,retr[(1 + n_light):(n_light * 2)],model="EP",
+
+retr_ep_dark<-tryCatch({thejesus::fit_etr(par,retr[(1 + n_light):(n_light * 2)],model="EP",
                                   starting_values = starting_values)},error=function(e){
   print("Error: could not fit model rETR dark");
   return(NULL)
@@ -147,31 +147,34 @@ retr_ep_dark<-tryCatch({fit_etr(par,retr[(1 + n_light):(n_light * 2)],model="EP"
 
 
 if (ynpqm_light[1]==0){
-  ynpq_m_2011_light<-tryCatch({fit_npq_2011(par,ynpqm_light,
+  ynpq_m_2011_light<-tryCatch({thejesus::fit_npq_2011(par,ynpqm_light,
                                               starting_values = list("NPQmax"=2,"E50"=700,"hill"= 1))},error=function(e){
                                                 print("Error: could not fit model YNPQm 2011 light");
                                                 return(NULL)
                                               })
-  ynpq_m_2011_dark<-tryCatch({fit_npq_2011(par,ynpqm_dark,
+  ynpq_m_2011_dark<-tryCatch({thejesus::fit_npq_2011(par,ynpqm_dark,
                                            starting_values = list( "NPQmax"=2,"E50"=700,"hill"= 1))},error=function(e){
                                                print("Error: could not fit model YNPQm 2011 dark");
                                                return(NULL)
                                              })
-  
+ynpq_m_2021_light<-NULL
+
 }else{
-  
+
+ynpq_m_2011_light<-NULL
+
   #YNPQ_m
-  ynpq_m_2021_light<-tryCatch({npq_model_2021(par,ynpqm_light,
-                                              "npq_o"=0.17,"NPQmax"=4,"E50"=1500,"hill"= 0.5,"Kd"=0.01,"C"=0)},error=function(e){
+
+  ynpq_m_2021_light<-tryCatch({thejesus::fit_npq_2021(par,ynpqm_light
+                                              )},error=function(e){
                                                 print("Error: could not fit model YNPQm light");
                                                 return(NULL)
                                               })
-  ynpq_m_2021_dark<-tryCatch({npq_model_2021(par,ynpqm_dark,
-                                             "npq_o"=0.17,"NPQmax"=4,"E50"=1500,"hill"= 0.5,"Kd"=0.01,"C"=0)},error=function(e){
+  ynpq_m_2021_dark<-tryCatch({thejesus::fit_npq_2021(par,ynpqm_dark)},error=function(e){
                                                print("Error: could not fit model YNPQm dark");
                                                return(NULL)
                                              })
-  
+
 }
 
 
@@ -206,12 +209,12 @@ legend("topright",legend = c("Light","Dark 2s"),
 #Sigma PSII
 
 
-my_plot(par,sigma_p_light,sd = sigma_se_light,
+thejesus::my_plot(par,sigma_p_light,sd = sigma_se_light,
      ylab = "", xlab = "",type = 'b',xlim=c(min(par),max(par)),
      pch = 21, bg = 1, ylim=c(min(c(sigma_p_light-max(sigma_se_light),sigma_p_dark-max(sigma_se_dark))),
                               max(c(sigma_p_light+max(sigma_se_light),sigma_p_dark+max(sigma_se_dark)))),
      xaxt = "n", yaxt = "n")
-my_plot(par,sigma_p_dark,sd = sigma_se_dark,
+thejesus::my_plot(par,sigma_p_dark,sd = sigma_se_dark,
        ylab = "", xlab = "",type = 'b',
        pch = 21, bg = 2,overlay=TRUE)
 axis(4)
@@ -232,7 +235,7 @@ legend("topleft",legend=expression("rETR"),bty = "n", cex=1)
 
 #YNPQ model
 if (ynpqm_light[1]==0){
-  
+
   #print(ynpq_m_2021_light)
   if (is.null(ynpq_m_2011_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
@@ -243,17 +246,17 @@ if (ynpqm_light[1]==0){
     axis(4)
     legend("topleft",legend=c(paste("NPQmax = ",round(ynpq_m_2011_light$parameters$NPQmax,2))
                               ,paste("E50 = ",round(ynpq_m_2011_light$parameters$E50,0))
-                              
+
                               ,paste("h = ",round(ynpq_m_2011_light$parameters$hill,2))
-                              
+
     )
     ,bty="n")
-    
+
   }
-  
-  
+
+
 }else{
-  
+
   #print(ynpq_m_2021_light)
   if (is.null(ynpq_m_2021_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
@@ -264,12 +267,12 @@ if (ynpqm_light[1]==0){
     axis(4)
     legend("topleft",legend=c(paste("NPQmax = ",round(ynpq_m_2021_light$parameters$NPQmax,2))
                               ,paste("E50 = ",round(ynpq_m_2021_light$parameters$E50,0))
-                              ,paste("NPQo = ",round(ynpq_m_2021_light$parameters$NPQ_o,2))
+                              ,paste("NPQo = ",round(ynpq_m_2021_light$parameters$NPQo,2))
                               ,paste("h = ",round(ynpq_m_2021_light$parameters$hill,2))
                               ,paste("Kd = ",round(ynpq_m_2021_light$parameters$Kd,3))
     )
     ,bty="n")
-    
+
   }
 }
 
@@ -277,22 +280,22 @@ legend("bottomright",legend=expression("YNPQ"),bty = "n", cex=1)
 
 #########
 #tau
-my_plot(x = par,y = tau_light, sd = tau_se_light,type = "b",
+thejesus::my_plot(x = par,y = tau_light, sd = tau_se_light,type = "b",
         ylim=c(min(c(tau_light-max(tau_se_light),tau_dark-max(tau_se_dark))),
                                                                   max(c(tau_light+max(tau_se_light),tau_dark+max(tau_se_dark))))
 )
-my_plot(x = par,y = tau_dark,overlay = TRUE, sd = tau_se_dark,type="b",bg=2)
+thejesus::my_plot(x = par,y = tau_dark,overlay = TRUE, sd = tau_se_dark,type="b",bg=2)
 
 legend("bottomleft",legend=expression(tau[1]),bty = "n", cex=1.5)
 
 
 #########
 #rho
-my_plot(x = par,y = rho_light, sd = rho_se_light,type = "b",yaxt = "n",
+thejesus::my_plot(x = par,y = rho_light, sd = rho_se_light,type = "b",yaxt = "n",
         ylim=c(min(c(rho_light-max(rho_se_light),rho_dark-max(rho_se_dark))),
                max(c(rho_light+max(rho_se_light),rho_dark+max(rho_se_dark))))
 )
-my_plot(x = par,y = rho_dark,overlay = TRUE, sd = rho_se_dark,type="b",bg=2)
+thejesus::my_plot(x = par,y = rho_dark,overlay = TRUE, sd = rho_se_dark,type="b",bg=2)
 axis(4)
 
 legend("bottomleft",legend=expression(rho),bty = "n", cex=1.5)
@@ -303,7 +306,7 @@ legend("bottomleft",legend=expression(rho),bty = "n", cex=1.5)
 
 
 
-    
+
 ###############################################################################
 #output section
 ###############################################################################
@@ -311,52 +314,61 @@ legend("bottomleft",legend=expression(rho),bty = "n", cex=1.5)
 
 #bulding the output dataframe
 
-if (ynpqm_light[1]==0){
- 
-   if (is.null(ynpq_m_2011_light)==FALSE){
-    npq_model_values<-as.data.frame(cbind(ynpq_m_2011_light$predicted$par,ynpq_m_2011_light$predicted$npq,ynpq_m_2011_dark$predicted$npq),stringsAsFactors=FALSE)
+
+
+if (is.null(ynpq_m_2011_light)==FALSE){
+
+      npq_model_values<-as.data.frame(cbind(ynpq_m_2011_light$predicted$par,ynpq_m_2011_light$predicted$npq,ynpq_m_2011_dark$predicted$npq),stringsAsFactors=FALSE)
+
     names(npq_model_values)<-c("par","predicted_light","predicted_dark")
-    
+
     model_param<-cbind.data.frame(ynpq_m_2011_light$parameters$NPQmax,
                                   ynpq_m_2011_light$parameters$E50,
                                   ynpq_m_2011_light$parameters$hill
-                                  
-                                 )    
-    
+
+                                 )
+
     names(model_param)<-c("NPQmax", "E50","h")
-    
-}else{
-  
-  if (is.null(ynpq_m_2021_light)==FALSE){
+    sti_values<-data.frame(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau,stringsAsFactors=FALSE)
+    output<-list(sti_values,model_param,npq_model_values)
+    names(output)<-c("sti_values","npq_model_param","npq_model_values")
+}
+
+
+
+if (is.null(ynpq_m_2021_light)==FALSE){
+
     npq_model_values<-as.data.frame(cbind(ynpq_m_2021_light$predicted$par,ynpq_m_2021_light$predicted$npq,ynpq_m_2021_dark$predicted$npq),stringsAsFactors=FALSE)
+
     names(npq_model_values)<-c("par","predicted_light","predicted_dark")
-    
+
     model_param<-cbind.data.frame(ynpq_m_2021_light$parameters$NPQmax,
                                   ynpq_m_2021_light$parameters$E50,
-                                  ynpq_m_2021_light$parameters$NPQ_o,
+                                  ynpq_m_2021_light$parameters$NPQo,
                                   ynpq_m_2021_light$parameters$hill,
                                   ynpq_m_2021_light$parameters$Kd,
-                                  ynpq_m_2021_light$parameters$C)    
-    
+                                  ynpq_m_2021_light$parameters$C)
+
     names(model_param)<-c("NPQmax", "E50","NPQo","h","Kd","C")
-    
-    
-}
-}
 
-sti_values<-as.data.frame(cbind(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau),stringsAsFactors=FALSE)
+   # sti_values<-as.data.frame(cbind(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau),stringsAsFactors=FALSE)
+    sti_values<-data.frame(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau,stringsAsFactors=FALSE)
+    sti_values$par<-as.numeric(sti_values$par)
 
-output<-list(sti_values,model_param,npq_model_values)
+    output<-list(sti_values,model_param,npq_model_values)
+    names(output)<-c("sti_values","npq_model_param","npq_model_values")
 
-names(output)<-c("sti_values","model_param","npq_model_values")
-}else{
-  
+  }
+
+print("I'm here")
+
+
+if (is.null(ynpq_m_2021_light)==TRUE&is.null(ynpq_m_2011_light)==TRUE){
+
   sti_values<-as.data.frame(cbind(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau),stringsAsFactors=FALSE)
-  
-  output<-sti_values
-  
 
-  
+  output<-sti_values
+
 }
 
 
