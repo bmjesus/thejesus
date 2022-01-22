@@ -1,11 +1,11 @@
 #' @title Function to calculate second derivatives from reflectance spectra
 #' @description Function to calculate second derivatives from reflectance spectra
-#' @param wl
+#' @param wl wavelengths
 #' @param w reflectance values
 #' @param knots smoothing parameter for the loess function (default = 0.08)
 #' @param reflectance optional parameter to preview the effect of smoothing on the reflectance data (default=FALSE)
 #' @param smooth_reflectance (default = 0.08)
-#' @para plots parameter to turn off plotting, default TRUE
+#' @param plots parameter to turn off plotting, default TRUE
 #' @return a list with two dataframes: one with the original data and another with the derivative values
 #' @keywords external
 #' @export

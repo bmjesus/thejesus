@@ -1,6 +1,8 @@
 #' @title function to fit several PI models
 #' @description  Preview of RLC curves and associated parameters
 #' @param x rlc object from the process_psi() function
+#' @param starting_values list of starting values to fit the rETR model, needs to be changed to auto values
+#' @param model not implemented yet
 #' @return the fitted values for several PI models
 #' @export
 #' @keywords external

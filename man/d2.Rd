@@ -7,6 +7,8 @@
 d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance, plots = TRUE)
 }
 \arguments{
+\item{wl}{wavelengths}
+
 \item{w}{reflectance values}
 
 \item{knots}{smoothing parameter for the loess function (default = 0.08)}
@@ -14,6 +16,8 @@ d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance, plots = TRUE)
 \item{reflectance}{optional parameter to preview the effect of smoothing on the reflectance data (default=FALSE)}
 
 \item{smooth_reflectance}{(default = 0.08)}
+
+\item{plots}{parameter to turn off plotting, default TRUE}
 }
 \value{
 a list with two dataframes: one with the original data and another with the derivative values

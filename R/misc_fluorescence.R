@@ -180,9 +180,17 @@ eff <- function(f,fm){
 ##############################################################################
 
 #' @title
-#' @description
-#' @param f fluorescence yield
-#' @param fm maximum fluorescence yield
+#' @description function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
+#' @param Fp fluorescence yield at light
+#' @param Fmp maximum fluorescence yield at light
+#' @param sigmaPSII sigmaPSII
+#' @param sigmaPSIIp sigmaPSII prime
+#' @param Fo minimum fluorescence yield
+#' @param Fop minimum fluorescence at light
+#' @param Fm maximum fluorescence yield
+#' @param overlay  FALSE
+#' @param pch  NULL
+#' @param bg  NULL
 #' @return
 #' @keywords external
 #' @export

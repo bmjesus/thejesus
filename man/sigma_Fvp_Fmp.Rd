@@ -18,14 +18,30 @@ sigma_Fvp_Fmp(
 )
 }
 \arguments{
-\item{f}{fluorescence yield}
+\item{sigmaPSII}{sigmaPSII}
 
-\item{fm}{maximum fluorescence yield}
+\item{sigmaPSIIp}{sigmaPSII prime}
+
+\item{Fo}{minimum fluorescence yield}
+
+\item{Fop}{minimum fluorescence at light}
+
+\item{Fm}{maximum fluorescence yield}
+
+\item{Fp}{fluorescence yield at light}
+
+\item{Fmp}{maximum fluorescence yield at light}
+
+\item{overlay}{FALSE}
+
+\item{pch}{NULL}
+
+\item{bg}{NULL}
 }
 \value{
 
 }
 \description{
-
+function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 }
 \keyword{external}

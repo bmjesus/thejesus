@@ -12,6 +12,10 @@ rlc_analysis(
 }
 \arguments{
 \item{x}{rlc object from the process_psi() function}
+
+\item{starting_values}{list of starting values to fit the rETR model, needs to be changed to auto values}
+
+\item{model}{not implemented yet}
 }
 \value{
 the fitted values for several PI models
