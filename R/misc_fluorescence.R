@@ -179,7 +179,7 @@ eff <- function(f,fm){
 #Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 ##############################################################################
 
-#' @title
+#' @title function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 #' @description function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 #' @param Fp fluorescence yield at light
 #' @param Fmp maximum fluorescence yield at light
@@ -191,7 +191,7 @@ eff <- function(f,fm){
 #' @param overlay  FALSE
 #' @param pch  NULL
 #' @param bg  NULL
-#' @return
+#' @return a plot of Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 #' @keywords external
 #' @export
 sigma_Fvp_Fmp<-function(sigmaPSII,sigmaPSIIp, Fo, Fop, Fm, Fp, Fmp,

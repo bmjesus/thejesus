@@ -3,7 +3,7 @@
 #' @param a File with the O2 data
 #' @param light_time Dataframe with one column with light data, one column with the starting times and one column with the finishing times
 #' @param num_rows number of rows to skip when reading the file because the header size might change
-#' @return
+#' @return a plot and a dataframe with "time" and "O2_rate"
 #' @keywords external
 #' @export
 

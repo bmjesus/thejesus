@@ -14,7 +14,7 @@ light_curvesO2(a = "./", light_time, num_rows = 13)
 \item{num_rows}{number of rows to skip when reading the file because the header size might change}
 }
 \value{
-
+a plot and a dataframe with "time" and "O2_rate"
 }
 \description{
 Function to fit PI models to O2 data from the FireSting (Pyroscience)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/misc_fluorescence.R
 \name{sigma_Fvp_Fmp}
 \alias{sigma_Fvp_Fmp}
-\title{}
+\title{function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm}
 \usage{
 sigma_Fvp_Fmp(
   sigmaPSII,
@@ -39,7 +39,7 @@ sigma_Fvp_Fmp(
 \item{bg}{NULL}
 }
 \value{
-
+a plot of Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
 }
 \description{
 function to plot Sigma'/Sigma vs Fv'/Fm'/Fv/Fm
