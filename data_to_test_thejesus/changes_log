@@ -1,0 +1,29 @@
+
+12/03/2020
+
+added the option of calculating ndvi in the read_ooptics function
+
+added a message to etr_models when the model converges
+
+added the original ETR and PAR values to the output list of etr_models
+
+
+13/03/2020
+
+added the function read_asd to read spectra from Doug's ASD machine
+
+15/03/2020
+
+added function to calculate second derivatives from reflectance spectra
+
+10/06/2020
+corrected second derivative function and added the integral fucntion
+
+TO DO
+
+ADD integral function
+
+
+
+
+

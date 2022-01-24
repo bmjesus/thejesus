@@ -143,10 +143,10 @@ fit_npq_2021<-function(light,npq,
   }
 
 
-  df<-data.frame(cbind(light,npq),stringsAsFactors=FALSE)
+  df<-data.frame(na.omit(cbind(light,npq)),stringsAsFactors=FALSE)
 
   if (is.null(starting_values)==TRUE){
-    starting_values = list(NPQo=npq[1],NPQmax=max(npq),E50=max(light)/2,hill=1,Kd=0.01,C=0)
+    starting_values = list(NPQo=npq[1],NPQmax=max(na.omit(npq)),E50=max(light)/2,hill=1,Kd=0.01,C=0)
   }
 
 

@@ -27,6 +27,7 @@ Collate:
     'read_ooptics.R'
     'my_plot.R'
     'rlc_preview_plots.R'
+    'integral.R'
 RoxygenNote: 7.1.1
 Roxygen: list(markdown = TRUE)
 Suggests: 

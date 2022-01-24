@@ -17,7 +17,9 @@ my_plot(
   bg = NULL,
   type = NULL,
   xaxt = NULL,
-  yaxt = NULL
+  yaxt = NULL,
+  lty = NULL,
+  col = NULL
 )
 }
 \arguments{
@@ -39,13 +41,17 @@ my_plot(
 
 \item{pch}{type of symbol}
 
-\item{bg}{color of the symbol}
+\item{bg}{color of the symbol background}
 
 \item{type}{type of plot}
 
 \item{xaxt}{xaxt}
 
 \item{yaxt}{yaxt}
+
+\item{lty}{type of line}
+
+\item{col}{color of the symbol}
 }
 \value{
 plots a x,y plot with sd bars

@@ -51,8 +51,8 @@ npq<-c( npq_light, npq_dark )
 #the same value
 #NPQm
 
-fmm_light<-max(fmp_light)
-fmm_dark<-max(fmp_dark)
+fmm_light<-max(na.omit(fmp_light))
+fmm_dark<-max(na.omit(fmp_dark))
 
 npq_light_m<-(fmm_light-fmp_light)/fmp_light
 npq_dark_m<-(fmm_dark-fmp_dark)/fmp_dark
@@ -161,7 +161,9 @@ if (ynpqm_light[1]==0){
                                              })
 ynpq_m_2021_light<-NULL
 
-}else{
+}
+
+if (ynpqm_light[1]!=0){
 
 ynpq_m_2011_light<-NULL
 
@@ -180,13 +182,6 @@ ynpq_m_2011_light<-NULL
 }
 
 
-#Serodio and Lavaud 2011
-#NPQ = NPQm * (E_n/(E_n_50 + E_n))
-
-#Serodio and Lavaud 2021
-#NPQ = NPQo * e^(-kd*E) + NPQm * (E_n/(E_n_50 + E_n)) + C
-#NPQo measured at dark E=0 (not really, decided to let it float because the model fits better like that)
-#Kd  coefficient of NPQ dissipation when exposed to light
 
 
 ###############################################################################
@@ -197,9 +192,11 @@ par(mfrow=c(3,2),oma=c(4,4,3,4),mar=c(0,0,0,0),las=1)
 
 ####################
 #PSII efficiency
+
+
 plot(par,Fv_Fm_light,
      ylab = "", xaxt = 'n',xlab = "",type = 'b',xaxt = "n",
-     pch = 21, bg = 1, col = 1,ylim=c(min(c(Fv_Fm_light,Fv_Fm_dark)),max(c(Fv_Fm_light,Fv_Fm_dark))))
+     pch = 21, bg = 1, col = 1,ylim=c(min(na.omit(c(Fv_Fm_light,Fv_Fm_dark))),max(na.omit(c(Fv_Fm_light,Fv_Fm_dark)))))
 points(par,Fv_Fm_dark,
      ylab = "", xaxt = 'n',xlab = "",type = 'b',
      pch = 21, bg = 2, col = 2)
@@ -211,10 +208,11 @@ legend("topright",legend = c("Light","Dark 2s"),
 #Sigma PSII
 
 
+
 thejesus::my_plot(par,sigma_p_light,sd = sigma_se_light,
      ylab = "", xlab = "",type = 'b',xlim=c(min(par),max(par)),
-     pch = 21, bg = 1, ylim=c(min(c(sigma_p_light-max(sigma_se_light),sigma_p_dark-max(sigma_se_dark))),
-                              max(c(sigma_p_light+max(sigma_se_light),sigma_p_dark+max(sigma_se_dark)))),
+     pch = 21, bg = 1, ylim=c(na.omit(min(c(sigma_p_light-na.omit(max(sigma_se_light)),sigma_p_dark-na.omit(max(sigma_se_dark))))),
+                                      na.omit(max(c(sigma_p_light+na.omit(max(sigma_se_light)),sigma_p_dark+na.omit(max(sigma_se_dark)))))),
      xaxt = "n", yaxt = "n")
 thejesus::my_plot(par,sigma_p_dark,sd = sigma_se_dark,
        ylab = "", xlab = "",type = 'b',
@@ -263,7 +261,7 @@ if (ynpqm_light[1]==0){
   if (is.null(ynpq_m_2021_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch=21,bg=1, ylab="YNPQ",xaxt = "n", yaxt = "n")
+    plot(par,ynpqm_light,pch=21,bg=1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
     points(ynpq_m_2021_light$predicted$par,ynpq_m_2021_light$predicted$npq
            ,type="l",col=2)
     axis(4)
@@ -294,9 +292,10 @@ legend("bottomleft",legend=expression(tau[1]),bty = "n", cex=1.5)
 #########
 #rho
 thejesus::my_plot(x = par,y = rho_light, sd = rho_se_light,type = "b",yaxt = "n",
-        ylim=c(min(c(rho_light-max(rho_se_light),rho_dark-max(rho_se_dark))),
-               max(c(rho_light+max(rho_se_light),rho_dark+max(rho_se_dark))))
-)
+        ylim=c(min(na.omit(c(rho_light-max(na.omit(rho_se_light)),rho_dark-max(na.omit(rho_se_dark))))),
+               max(na.omit(c(rho_light+max(na.omit(rho_se_light)),rho_dark+max(na.omit(rho_se_dark))))))
+        ,xlim=c(min(par),max(par)))
+
 thejesus::my_plot(x = par,y = rho_dark,overlay = TRUE, sd = rho_se_dark,type="b",bg=2)
 axis(4)
 
@@ -362,12 +361,10 @@ if (is.null(ynpq_m_2021_light)==FALSE){
 
   }
 
-print("I'm here")
-
 
 if (is.null(ynpq_m_2021_light)==TRUE&is.null(ynpq_m_2011_light)==TRUE){
 
-  sti_values<-as.data.frame(cbind(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau),stringsAsFactors=FALSE)
+  sti_values<-data.frame(type, par, retr, npq, npq_m, ynpq,ynpqm,eff,sigma, tau,stringsAsFactors=FALSE)
 
   output<-sti_values
 
