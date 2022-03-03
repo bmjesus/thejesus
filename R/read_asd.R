@@ -45,6 +45,7 @@ data_raw<-as.numeric(data_raw)
 all_data<-as.data.frame(matrix(data_raw,length(data_raw)/2,2,byrow = TRUE))
 names(all_data)<-c("wl","reflect")
 
+print(all_data)
 
 #group reflectance by wavelength
 all_data$wl<-round(all_data$wl,0)

@@ -62,6 +62,10 @@ light_curvesO2<-function(a="./",light_time,num_rows=13){
     y<-with(matriz_O2,ch1_O2[time_s>=light_time[i,2]&time_s<=light_time[i,3]])
     x<-with(matriz_O2,time_s[time_s>=light_time[i,2]&time_s<=light_time[i,3]])
 
+    print(x)
+    print(y)
+
+
     lm_O2<-lm(y~x)
 
 

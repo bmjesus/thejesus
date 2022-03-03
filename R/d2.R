@@ -6,11 +6,12 @@
 #' @param reflectance optional parameter to preview the effect of smoothing on the reflectance data (default=FALSE)
 #' @param smooth_reflectance (default = 0.08)
 #' @param plots parameter to turn off plotting, default TRUE
+#' @param peaks parameter plot peak wavelengths, positive or negative, default positive
 #' @return a list with two dataframes: one with the original data and another with the derivative values
 #' @keywords external
 #' @export
 
-d2<-function (wl,w,knots=0.08,reflectance=FALSE, smooth_reflectance, plots=TRUE)
+d2<-function (wl,w,knots = 0.08,reflectance=FALSE, smooth_reflectance, plots=TRUE, peaks = "positive")
 {
 
 #Add an optional smoothing parameter for the reflectance data
@@ -101,8 +102,10 @@ if (plots==TRUE){
 
   #adding lines and peaks
 
-  for (v in 1:(length(norm)-2))
-  {
+  for (v in 1:(length(norm)-2)){
+
+    if (peaks == "positive"){
+    {
     if(norm[v+1]>norm[v]&norm[v+2]<norm[v+1])
     #if((norm[v+1]>norm[v]&norm[v+2]<norm[v+1]) || (norm[v+1]<norm[v]&norm[v+2]>norm[v+1]))
 
@@ -112,6 +115,18 @@ if (plots==TRUE){
       text(x[v+1],(pmax-pmin)*((norm[v+1]-smin)/(smax-smin))+pmin,labels=round(x[v+1],0),pos=3,cex=0.8)
 
     }
+  }
+    }
+    if (peaks == "negative"){
+    {
+      if((norm[v+1]<norm[v]&norm[v+2]>norm[v+1]))
+
+      {
+        text(x[v+1],(pmax-pmin)*((norm[v+1]-smin)/(smax-smin))+pmin,labels=round(x[v+1],0),pos=1,cex=0.8)
+
+      }
+    }
+  }
   }
 
 }
