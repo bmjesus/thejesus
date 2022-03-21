@@ -133,8 +133,8 @@ if(model == 'EP'){
     coefs <- stats::coef(my.res)
 
     my.alpha <- as.numeric(coefs[1])
-    my.eopt <- as.numeric(coefs[2])
-    my.etrmax <- as.numeric(coefs[3])
+    my.eopt <- as.numeric(coefs[3])
+    my.etrmax <- as.numeric(coefs[2])
 
     #run predict to get fit line
     new.dat <- data.frame(light=seq(0,max(light), by=1))
