@@ -8,7 +8,7 @@ devtools::install()
 
 
 
-1#REFLECTANCE
+#REFLECTANCE
 
 
 a<-read_ooptics("./data_to_test_thejesus/blue_tokio.txt",plot = TRUE,indices = TRUE)

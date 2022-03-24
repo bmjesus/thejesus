@@ -5,6 +5,7 @@
 #' @param starting_values The starting values of the parameters to fit (list).
 #' @param num_obs Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps
 #' @param  plots Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.
+#' @param limit_npq_max when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)
 #' @return The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters.
 #' @keywords external
 #' @export
@@ -12,7 +13,8 @@ fit_npq_2011<-function(light,
                     npq,
                     starting_values=NULL,
                     num_obs=NULL,
-                    plots=TRUE){
+                    plots=TRUE,
+                    limit_npq_max=FALSE){
 
   app.data<-list()
 
@@ -25,15 +27,21 @@ fit_npq_2011<-function(light,
     starting_values=starting_values
   }
 
-
-
-    if (is.null(starting_values)==TRUE){
+  if (is.null(starting_values)==TRUE){
       starting_values=list(NPQmax = 2,E50 = 200, hill = 1)
     }
+
+  if (limit_npq_max==TRUE){
+    my_upper <- c(1,Inf,Inf)
+  }else{
+    my_upper <- c(Inf,Inf,Inf)
+  }
+
+
     my.res<-tryCatch({
       minpack.lm::  nlsLM(npq ~ NPQmax*(light^hill/((E50^hill + light^hill))) ,
                           start=starting_values, algorithm="port", trace=F,
-                          lower = c(0,0,0), control=stats::nls.control(maxiter=1024))
+                          lower = c(0,0,0), upper = my_upper, control=stats::nls.control(maxiter=1024))
 
     },error=function(e){NaN}
     )
@@ -125,13 +133,15 @@ if (plots==TRUE){
 #' @param npq npq values
 #' @param starting_values The starting values of the parameters to fit (list with the starting values for NPQo=,NPQmax,E50,hill,Kd,C).
 #' @param num_obs Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps
+#' @param limit_npq_max when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)
 #' @return The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters
 #' @keywords external
 #' @export
 
 fit_npq_2021<-function(light,npq,
-                       starting_values=NULL,
-                       num_obs=NULL
+                       starting_values = NULL,
+                       num_obs = NULL,
+                       limit_npq_max = FALSE
                        ){
 
   npq<-npq
@@ -149,11 +159,16 @@ fit_npq_2021<-function(light,npq,
     starting_values = list(NPQo=npq[1],NPQmax=max(na.omit(npq)),E50=max(light)/2,hill=1,Kd=0.01,C=0)
   }
 
+  if (limit_npq_max == TRUE){
+    my_upper <- c(Inf,1,Inf,Inf,Inf,Inf)
+  }else{
+    my_upper <- c(Inf,Inf,Inf,Inf,Inf,Inf)
+  }
 
   npq_sim<-tryCatch({minpack.lm::nlsLM(npq~(NPQo*exp(-Kd*light) + NPQmax*(light^hill/(E50^hill + light^hill)) - C)
                              ,start=starting_values
                              , data=df
-                             ,lower = c(0,0,0,0,0,-Inf),upper = c(Inf,Inf,Inf,Inf,Inf,Inf))},error=function(e){NaN}
+                             ,lower = c(0,0,0,0,0,-Inf),upper = my_upper)},error=function(e){NaN}
   )
 
   ################################################################################

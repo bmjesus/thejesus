@@ -4,7 +4,15 @@
 \alias{d2}
 \title{Function to calculate second derivatives from reflectance spectra}
 \usage{
-d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance, plots = TRUE)
+d2(
+  wl,
+  w,
+  knots = 0.08,
+  reflectance = FALSE,
+  smooth_reflectance,
+  plots = TRUE,
+  peaks = "positive"
+)
 }
 \arguments{
 \item{wl}{wavelengths}
@@ -18,6 +26,8 @@ d2(wl, w, knots = 0.08, reflectance = FALSE, smooth_reflectance, plots = TRUE)
 \item{smooth_reflectance}{(default = 0.08)}
 
 \item{plots}{parameter to turn off plotting, default TRUE}
+
+\item{peaks}{parameter plot peak wavelengths, positive or negative, default positive}
 }
 \value{
 a list with two dataframes: one with the original data and another with the derivative values

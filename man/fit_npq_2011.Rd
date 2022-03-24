@@ -4,7 +4,14 @@
 \alias{fit_npq_2011}
 \title{Function to fit NPQ model}
 \usage{
-fit_npq_2011(light, npq, starting_values = NULL, num_obs = NULL, plots = TRUE)
+fit_npq_2011(
+  light,
+  npq,
+  starting_values = NULL,
+  num_obs = NULL,
+  plots = TRUE,
+  limit_npq_max = FALSE
+)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}
@@ -16,6 +23,8 @@ fit_npq_2011(light, npq, starting_values = NULL, num_obs = NULL, plots = TRUE)
 \item{num_obs}{Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps}
 
 \item{plots}{Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.}
+
+\item{limit_npq_max}{when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)}
 }
 \value{
 The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters.

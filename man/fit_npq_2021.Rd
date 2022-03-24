@@ -4,7 +4,13 @@
 \alias{fit_npq_2021}
 \title{Function to fit NPQ model}
 \usage{
-fit_npq_2021(light, npq, starting_values = NULL, num_obs = NULL)
+fit_npq_2021(
+  light,
+  npq,
+  starting_values = NULL,
+  num_obs = NULL,
+  limit_npq_max = FALSE
+)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}
@@ -14,6 +20,8 @@ fit_npq_2021(light, npq, starting_values = NULL, num_obs = NULL)
 \item{starting_values}{The starting values of the parameters to fit (list with the starting values for NPQo=,NPQmax,E50,hill,Kd,C).}
 
 \item{num_obs}{Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps}
+
+\item{limit_npq_max}{when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)}
 }
 \value{
 The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters

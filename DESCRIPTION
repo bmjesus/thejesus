@@ -28,7 +28,7 @@ Collate:
     'my_plot.R'
     'rlc_preview_plots.R'
     'integral.R'
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,
