@@ -3,6 +3,7 @@
 #' @param x x
 #' @param y y
 #' @param sd numerical vector with the dispersion measurement to plot
+#' @param sd_x numerical vector with the dispersion measurement in the x-axis to plot
 #' @param overlay logical, if TRUE then the function "points" is used instead of "plot"
 #' @param ylab ylab
 #' @param xlab xlab
@@ -15,10 +16,18 @@
 #' @param type type of plot
 #' @param xaxt xaxt
 #' @param yaxt yaxt
+#' @param cex cex
+#' @param cex.axis cex.axis
+#' @param cex.lab cex.lab
+#' @param log log
 #' @return plots a x,y plot with sd bars
 #' @keywords external
 #' @export
-my_plot<-function(x,y,sd = NULL, overlay = NULL,ylab = NULL,xlab = NULL, ylim = NULL,xlim = NULL,pch = NULL,bg = NULL, type = NULL, xaxt = NULL, yaxt = NULL,lty = NULL, col = NULL){
+my_plot<-function(x,y,sd = NULL, sd_x = NULL, overlay = NULL,
+                  ylab = NULL,xlab = NULL, ylim = NULL,xlim = NULL,
+                  pch = NULL,bg = NULL, type = NULL, xaxt = NULL,
+                  yaxt = NULL,lty = NULL, col = NULL,
+                  cex = NULL, cex.axis = NULL, cex.lab = NULL, log = NULL){
 
   if (is.null(sd)==TRUE){
     sd <- 0
@@ -26,7 +35,11 @@ my_plot<-function(x,y,sd = NULL, overlay = NULL,ylab = NULL,xlab = NULL, ylim = 
     sd <- sd
   }
 
-
+  if (is.null(sd_x)==TRUE){
+    sd_x <- 0
+  }else{
+    sd_x <- sd_x
+  }
 
   if (is.null(ylim)==TRUE){
     y_min<-min(c(y - sd))
@@ -76,18 +89,25 @@ my_plot<-function(x,y,sd = NULL, overlay = NULL,ylab = NULL,xlab = NULL, ylim = 
     type <- type
   }
 
+  if (is.null(log)==FALSE){
+    log <- log
+  }
 
 
 if (is.null(overlay)==TRUE){
       plot(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
            pch = pch, bg = bg,type = type, col = col, lty = lty,
-           xaxt = xaxt, yaxt = yaxt)
+           xaxt = xaxt, yaxt = yaxt, cex = cex, cex.axis = cex.axis,
+           cex.lab = cex.lab)
       segments(x,y-sd,x,y+sd,col = bg)
+      segments(x-sd_x,y,x+sd_x,y,col = bg)
     }else{
       points(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
              pch = pch, bg = bg, type = type, col = col, lty = lty,
-             xaxt = xaxt, yaxt = yaxt)
+             xaxt = xaxt, yaxt = yaxt, cex = cex , cex.axis = cex.axis,
+             cex.lab = cex.lab)
       segments(x,y-sd,x,y+sd,col = bg)
+      segments(x-sd_x,y,x+sd_x,y,col = bg)
     }
 
 

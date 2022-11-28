@@ -133,8 +133,8 @@ if(model == 'EP'){
     coefs <- stats::coef(my.res)
 
     my.alpha <- as.numeric(coefs[1])
-    my.eopt <- as.numeric(coefs[3])
-    my.etrmax <- as.numeric(coefs[2])
+    my.eopt <- as.numeric(coefs[2])
+    my.etrmax <- as.numeric(coefs[3])
 
     #run predict to get fit line
     new.dat <- data.frame(light=seq(0,max(light), by=1))
@@ -183,13 +183,15 @@ if (plots==TRUE){
 
 #add the parameters to the plot if the model converged
 
-if(is.na(my.res[1])==FALSE){
+if(is.na(my.res[1]) == FALSE & plots == TRUE){
   legend("bottomright",legend = c(paste("alpha = ",round(app.data$alpha,2)),
                                   paste("ETRmax = ",round(app.data$etrmax,0)),
                                   paste("Ek = ",round(app.data$Ek,0)))
          ,bty="n")
   print("The ETR model converged")
-}else{
+}
+
+if(is.na(my.res[1]) == TRUE & plots == TRUE){
   legend("bottomright",legend ="The model did not converge, please choose different starting values"
          ,bty="n",cex=0.7)
   }
@@ -205,7 +207,11 @@ original_values<-as.data.frame(cbind(light,etr))
 app.data$original_values<-original_values
 
 if(is.na(my.res[1])==FALSE){
+
+
 return(app.data)
+
+
 }else{return("The model did not converge, please choose different starting values")}
 
 }
