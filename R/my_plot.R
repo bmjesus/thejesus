@@ -91,6 +91,8 @@ my_plot<-function(x,y,sd = NULL, sd_x = NULL, overlay = NULL,
 
   if (is.null(log)==FALSE){
     log <- log
+  }else{
+    log <- ""
   }
 
 
@@ -98,14 +100,14 @@ if (is.null(overlay)==TRUE){
       plot(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
            pch = pch, bg = bg,type = type, col = col, lty = lty,
            xaxt = xaxt, yaxt = yaxt, cex = cex, cex.axis = cex.axis,
-           cex.lab = cex.lab)
+           cex.lab = cex.lab, log = log)
       segments(x,y-sd,x,y+sd,col = bg)
       segments(x-sd_x,y,x+sd_x,y,col = bg)
     }else{
       points(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
              pch = pch, bg = bg, type = type, col = col, lty = lty,
              xaxt = xaxt, yaxt = yaxt, cex = cex , cex.axis = cex.axis,
-             cex.lab = cex.lab)
+             cex.lab = cex.lab, log = log)
       segments(x,y-sd,x,y+sd,col = bg)
       segments(x-sd_x,y,x+sd_x,y,col = bg)
     }
