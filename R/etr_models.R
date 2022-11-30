@@ -18,6 +18,10 @@ fit_etr<-function(light,etr,
                   plots=TRUE,
                   alpha_lm=FALSE){
 
+#constructing a dataframe to help with the estimation of starting values
+df_data <- as.data.frame(cbind(light,etr))
+names(df_data) <- c("light","etr")
+
 app.data<-list()
 
 if (is.null(num_obs)==FALSE){
@@ -34,7 +38,8 @@ if (is.null(starting_values)==FALSE){
   #Jassby & Platt model selected
   if(model == 'JP'){
     if (is.null(starting_values)==TRUE){
-      starting_values=list(alpha = 0.1, etrmax = 40)
+      starting_values=list(alpha = summary(lm(df_data$etr[2:3]~df_data$light[2:3]))$coefficients[2],
+                           etrmax = max(df_data$etr))
     }
     my.res<-tryCatch({
       minpack.lm::nlsLM(etr ~ etrmax * tanh((alpha * light) / etrmax),
@@ -68,9 +73,19 @@ if (is.null(starting_values)==FALSE){
 ################################################################################
 
 #Platt et al model
+#beta and Ps are not easy parameters to estimate a starting values
+
+
+
+
 if(model == 'P'){
-  if (is.null(starting_values)==TRUE){
-    starting_values=list(alpha = 0.2, Ps = 2000, beta=0)
+  if (is.null(starting_values) == TRUE){
+    starting_values=list(alpha = summary(lm(df_data$etr[2:3]~df_data$light[2:3]))$coefficients[2],
+      Ps = 2000,
+      beta = abs(summary(lm(df_data$light[(length(df_data$light)-2):length(df_data$light)] ~
+             df_data$etr[(length(df_data$light)-2):length(df_data$light)]))$coefficients[2]))
+  }else{
+    starting_values = starting_values
   }
 
   my.res <- tryCatch({
@@ -97,7 +112,7 @@ if(model == 'P'){
 
     #make available
     app.data$alpha <- my.alpha
-    print(my.alpha)
+    #print(my.alpha)
     app.data$ps <- my.ps
     app.data$beta <- my.beta
     app.data$etrmax <- my.ps*(my.alpha/(my.alpha+my.beta))*(my.beta/(my.alpha+my.beta))^(my.beta/my.alpha)
@@ -116,8 +131,15 @@ if(model == 'P'){
 #based on alpha, ETRmax,
 if(model == 'EP'){
 
-  if (is.null(starting_values)==TRUE){
+  if (is.null(starting_values)==FALSE){
     starting_values = starting_values
+  }else{
+    starting_values = list(
+      summary(lm(df_data$etr[2:3]~df_data$light[2:3]))$coefficients[2],
+      max(df_data$etr),
+      df_data$light[df_data$etr == max(df_data$etr)]
+    )
+    names(starting_values) <- c("alpha","etrmax","Eopt")
   }
 
   my.res <- tryCatch({
