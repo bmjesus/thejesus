@@ -78,7 +78,7 @@ my_plot<-function(x,y,sd = NULL, sd_x = NULL, overlay = NULL,
   }
 
   if (is.null(col_sd) == TRUE){
-    col_sd <- 1
+    col_sd <- col
   }else{
     col_sd <- col_sd
   }
@@ -107,8 +107,8 @@ if (is.null(overlay)==TRUE){
            pch = pch, bg = bg,type = type, col = col, lty = lty,
            xaxt = xaxt, yaxt = yaxt, cex = cex, cex.axis = cex.axis,
            cex.lab = cex.lab, log = log)
-      segments(x,y-sd,x,y+sd,col = col_sd)
-      segments(x-sd_x,y,x+sd_x,y,col = col_sd)
+      segments(x,y-sd,x,y+sd, col = col_sd)
+      segments(x-sd_x,y,x+sd_x,y, col = col_sd)
     }else{
       points(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
              pch = pch, bg = bg, type = type, col = col, lty = lty,

@@ -212,7 +212,7 @@ legend("topright",legend = c("Light","Dark"),
 
 ####################
 #Sigma PSII
-thejesus::my_plot(par,sigma_p_light,sd = sigma_se_light,
+my_plot(par,sigma_p_light,sd = sigma_se_light,
      ylab = "", xlab = "",type = 'b',xlim=c(min(par),max(par)),
      pch = 21, col = 1, bg = 0, col_sd = 1, ylim=c(na.omit(min(c(sigma_p_light-na.omit(max(sigma_se_light)),sigma_p_dark-na.omit(max(sigma_se_dark))))),
                                       na.omit(max(c(sigma_p_light+na.omit(max(sigma_se_light)),sigma_p_dark+na.omit(max(sigma_se_dark)))))),
@@ -264,7 +264,7 @@ if (ynpqm_light[1]==0){
   if (is.null(ynpq_m_2021_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch=21,bg=0, col_sd = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
+    plot(par,ynpqm_light,pch=21,bg=0, col = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
     points(ynpq_m_2021_light$predicted$par,ynpq_m_2021_light$predicted$npq
            ,type="l",col=1)
     axis(4)
