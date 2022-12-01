@@ -212,7 +212,7 @@ legend("topright",legend = c("Light","Dark"),
 
 ####################
 #Sigma PSII
-my_plot(par,sigma_p_light,sd = sigma_se_light,
+thejesus::my_plot(par,sigma_p_light,sd = sigma_se_light,
      ylab = "", xlab = "",type = 'b',xlim=c(min(par),max(par)),
      pch = 21, col = 1, bg = 0, col_sd = 1, ylim=c(na.omit(min(c(sigma_p_light-na.omit(max(sigma_se_light)),sigma_p_dark-na.omit(max(sigma_se_dark))))),
                                       na.omit(max(c(sigma_p_light+na.omit(max(sigma_se_light)),sigma_p_dark+na.omit(max(sigma_se_dark)))))),
