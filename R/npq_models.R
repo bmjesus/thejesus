@@ -134,6 +134,7 @@ if (plots==TRUE){
 #' @param starting_values The starting values of the parameters to fit (list with the starting values for NPQo=,NPQmax,E50,hill,Kd,C).
 #' @param num_obs Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps
 #' @param limit_npq_max when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)
+#' @param  plots Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.
 #' @return The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters
 #' @keywords external
 #' @export
@@ -141,7 +142,8 @@ if (plots==TRUE){
 fit_npq_2021<-function(light,npq,
                        starting_values = NULL,
                        num_obs = NULL,
-                       limit_npq_max = FALSE
+                       limit_npq_max = FALSE,
+                       plots = TRUE
                        ){
 
   npq<-npq
@@ -197,20 +199,27 @@ fit_npq_2021<-function(light,npq,
 
   if(is.na(npq_sim[1])==TRUE){
     print("No plot possible")
-  }else{
+  }
 
-  plot(light,npq,xlab="Light",ylab="NPQ",las=1,pch=21,bg=1,cex=1,cex.lab=1,cex.axis=1)
+  if(is.na(npq_sim[1]) == FALSE){
 
-  lines(x2,y2,col="blue",lwd=2)
+    if (plots == TRUE){
+      plot(light,npq,xlab="Light",ylab="NPQ",las=1,pch=21,bg=1,cex=1,cex.lab=1,cex.axis=1)
 
-  legend("bottomright",legend = c(paste("NPQo = ",round(NPQo,3)),
-                                  paste("NPQmax = ",round(NPQmax,2)),
-                                  paste("E50 = ",round(E50,0)),
-                                  paste("Sigmoidicity = ",round(hill,2)),
-                                  paste("Kd = ",round(Kd,4)),
-                                  paste("C = ",round(C,4)))
-         ,bty="n",cex=0.9)
+      lines(x2,y2,col="blue",lwd=2)
 
+      legend("bottomright",legend = c(paste("NPQo = ",round(NPQo,3)),
+                                      paste("NPQmax = ",round(NPQmax,2)),
+                                      paste("E50 = ",round(E50,0)),
+                                      paste("Sigmoidicity = ",round(hill,2)),
+                                      paste("Kd = ",round(Kd,4)),
+                                      paste("C = ",round(C,4)))
+             ,bty="n",cex=0.9)
+
+    }
+
+
+#Output section
 
   predicted<-data.frame(x2,y2)
   names(predicted)<-c("par","npq")

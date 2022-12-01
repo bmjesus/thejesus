@@ -6,7 +6,7 @@
 #' @return the fitted values for several PI models
 #' @export
 #' @keywords external
-rlc_analysis<-function(x,starting_values=list(alpha = 0.5, Eopt = 500, etrmax = 100),
+rlc_analysis<-function(x,starting_values=NULL,
                        model = NULL
                        ){
 
@@ -125,7 +125,8 @@ rho_se_dark<-x$sti_parameters$rho_se_sti[(1 + n_light):(n_light * 2)]
 #relative ETR, EP model
 
 retr_ep_light<-tryCatch({thejesus::fit_etr(par,retr[1:n_light],model="EP",
-                                 starting_values = starting_values)},error=function(e){
+                                 starting_values = starting_values,
+                                 plots = FALSE)},error=function(e){
   print("Error: could not fit model rETR light");
   return(NULL)
 })
@@ -136,7 +137,7 @@ retr_ep_light<-tryCatch({thejesus::fit_etr(par,retr[1:n_light],model="EP",
 
 
 retr_ep_dark<-tryCatch({thejesus::fit_etr(par,retr[(1 + n_light):(n_light * 2)],model="EP",
-                                  starting_values = starting_values)},error=function(e){
+                                  starting_values = starting_values, plots = FALSE)},error=function(e){
   print("Error: could not fit model rETR dark");
   return(NULL)
 })
@@ -147,15 +148,20 @@ retr_ep_dark<-tryCatch({thejesus::fit_etr(par,retr[(1 + n_light):(n_light * 2)],
 #section to select if the NPQ model should include "dark" NPQ or not
 #the 2021 model does not fit well when NPQ starts at zero
 
+#section to estimate good starting values
+
+ynpq_starting_values_model2011 <- list("NPQmax"= max(ynpq_light)
+                                         ,"E50"= par/2,"hill"= 1)
+
 
 if (ynpqm_light[1]==0){
   ynpq_m_2011_light<-tryCatch({thejesus::fit_npq_2011(par,ynpqm_light,
-                                              starting_values = list("NPQmax"=2,"E50"=700,"hill"= 1))},error=function(e){
+                                              starting_values = ynpq_starting_values_model2011, plots = FALSE)},error=function(e){
                                                 print("Error: could not fit model YNPQm 2011 light");
                                                 return(NULL)
                                               })
   ynpq_m_2011_dark<-tryCatch({thejesus::fit_npq_2011(par,ynpqm_dark,
-                                           starting_values = list( "NPQmax"=2,"E50"=700,"hill"= 1))},error=function(e){
+                                           starting_values = ynpq_starting_values_model2011, plots = FALSE)},error=function(e){
                                                print("Error: could not fit model YNPQm 2011 dark");
                                                return(NULL)
                                              })
@@ -169,12 +175,12 @@ ynpq_m_2011_light<-NULL
 
   #YNPQ_m
 
-  ynpq_m_2021_light<-tryCatch({thejesus::fit_npq_2021(par,ynpqm_light
+  ynpq_m_2021_light<-tryCatch({thejesus::fit_npq_2021(par, ynpqm_light, plots = FALSE
                                               )},error=function(e){
                                                 print("Error: could not fit model YNPQm light");
                                                 return(NULL)
                                               })
-  ynpq_m_2021_dark<-tryCatch({thejesus::fit_npq_2021(par,ynpqm_dark)},error=function(e){
+  ynpq_m_2021_dark<-tryCatch({thejesus::fit_npq_2021(par,ynpqm_dark, plots = FALSE)},error=function(e){
                                                print("Error: could not fit model YNPQm dark");
                                                return(NULL)
                                              })
@@ -196,35 +202,32 @@ par(mfrow=c(3,2),oma=c(4,4,3,4),mar=c(0,0,0,0),las=1)
 
 plot(par,Fv_Fm_light,
      ylab = "", xaxt = 'n',xlab = "",type = 'b',xaxt = "n",
-     pch = 21, bg = 1, col = 1,ylim=c(min(na.omit(c(Fv_Fm_light,Fv_Fm_dark))),max(na.omit(c(Fv_Fm_light,Fv_Fm_dark)))))
+     pch = 21, bg = 0, col = 1,ylim=c(min(na.omit(c(Fv_Fm_light,Fv_Fm_dark))),max(na.omit(c(Fv_Fm_light,Fv_Fm_dark)))))
 points(par,Fv_Fm_dark,
      ylab = "", xaxt = 'n',xlab = "",type = 'b',
-     pch = 21, bg = 2, col = 2)
+     pch = 21, bg = 1, col = 1)
 legend("bottomleft",legend=expression(phi[II]),bty = "n", cex=1.5)
-legend("topright",legend = c("Light","Dark 2s"),
-       pch = 21, pt.bg = c(1,2),col=c(1,2),bty="n",lty=1)
+legend("topright",legend = c("Light","Dark"),
+       pch = 21, pt.bg = c(0,1),col=c(1,1),bty="n",lty=1)
 
 ####################
 #Sigma PSII
-
-
-
 thejesus::my_plot(par,sigma_p_light,sd = sigma_se_light,
      ylab = "", xlab = "",type = 'b',xlim=c(min(par),max(par)),
-     pch = 21, bg = 1, ylim=c(na.omit(min(c(sigma_p_light-na.omit(max(sigma_se_light)),sigma_p_dark-na.omit(max(sigma_se_dark))))),
+     pch = 21, col = 1, bg = 0, col_sd = 1, ylim=c(na.omit(min(c(sigma_p_light-na.omit(max(sigma_se_light)),sigma_p_dark-na.omit(max(sigma_se_dark))))),
                                       na.omit(max(c(sigma_p_light+na.omit(max(sigma_se_light)),sigma_p_dark+na.omit(max(sigma_se_dark)))))),
      xaxt = "n", yaxt = "n")
 thejesus::my_plot(par,sigma_p_dark,sd = sigma_se_dark,
        ylab = "", xlab = "",type = 'b',
-       pch = 21, bg = 2,overlay=TRUE)
+       pch = 21, bg = 1,overlay=TRUE)
 axis(4)
 
 legend("bottomleft",legend=expression(sigma[II]),bty = "n", cex=1.5)
 
 #relative ETR
 #light step
-plot(par,retr[1:n_light],pch=21,bg=1,xaxt="n",xlab="",ylab = "rETR (a.u.)")
-points(retr_ep_light$pred.par,retr_ep_light$pred,type="l",col=2,xaxt="n")
+plot(par,retr[1:n_light],pch=21,bg=0,xaxt="n",xlab="",ylab = "rETR (a.u.)")
+points(retr_ep_light$pred.par,retr_ep_light$pred,type="l",col=1,xaxt="n")
 legend("bottomright",legend=c(paste("Alpha = ",round(retr_ep_light$alpha,2))
                               ,paste("ETRmax = ",round(retr_ep_light$etrmax,0))
                               ,paste("Ek = ",round(retr_ep_light$Ek,0))
@@ -240,7 +243,7 @@ if (ynpqm_light[1]==0){
   if (is.null(ynpq_m_2011_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch=21,bg=1, ylab="YNPQ",xaxt = "n", yaxt = "n")
+    plot(par,ynpqm_light,pch = 21,bg = 0, ylab="YNPQ",xaxt = "n", yaxt = "n")
     points(ynpq_m_2011_light$predicted$par,ynpq_m_2011_light$predicted$npq
            ,type="l",col=2)
     axis(4)
@@ -261,9 +264,9 @@ if (ynpqm_light[1]==0){
   if (is.null(ynpq_m_2021_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch=21,bg=1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
+    plot(par,ynpqm_light,pch=21,bg=0, col_sd = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
     points(ynpq_m_2021_light$predicted$par,ynpq_m_2021_light$predicted$npq
-           ,type="l",col=2)
+           ,type="l",col=1)
     axis(4)
     legend("topleft",legend=c(paste("NPQmax = ",round(ynpq_m_2021_light$parameters$NPQmax,2))
                               ,paste("E50 = ",round(ynpq_m_2021_light$parameters$E50,0))
@@ -283,8 +286,8 @@ legend("bottomright",legend=expression("YNPQ"),bty = "n", cex=1)
 thejesus::my_plot(x = par,y = tau_light, sd = tau_se_light,type = "b",
         ylim=c(min(c(tau_light-max(tau_se_light),tau_dark-max(tau_se_dark))),
                                                                   max(c(tau_light+max(tau_se_light),tau_dark+max(tau_se_dark))))
-)
-thejesus::my_plot(x = par,y = tau_dark,overlay = TRUE, sd = tau_se_dark,type="b",bg=2)
+, bg = 0, col_sd = 1)
+thejesus::my_plot(x = par,y = tau_dark,overlay = TRUE, sd = tau_se_dark,type="b",bg=1)
 
 legend("bottomleft",legend=expression(tau[1]),bty = "n", cex=1.5)
 
@@ -294,9 +297,9 @@ legend("bottomleft",legend=expression(tau[1]),bty = "n", cex=1.5)
 thejesus::my_plot(x = par,y = rho_light, sd = rho_se_light,type = "b",yaxt = "n",
         ylim=c(min(na.omit(c(rho_light-max(na.omit(rho_se_light)),rho_dark-max(na.omit(rho_se_dark))))),
                max(na.omit(c(rho_light+max(na.omit(rho_se_light)),rho_dark+max(na.omit(rho_se_dark))))))
-        ,xlim=c(min(par),max(par)))
+        ,xlim=c(min(par),max(par)), bg = 0, col_sd = 1)
 
-thejesus::my_plot(x = par,y = rho_dark,overlay = TRUE, sd = rho_se_dark,type="b",bg=2)
+thejesus::my_plot(x = par,y = rho_dark,overlay = TRUE, sd = rho_se_dark,type="b",bg = 1)
 axis(4)
 
 legend("bottomleft",legend=expression(rho),bty = "n", cex=1.5)

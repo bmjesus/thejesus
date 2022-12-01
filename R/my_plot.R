@@ -13,6 +13,7 @@
 #' @param bg color of the symbol background
 #' @param col color of the symbol
 #' @param lty type of line
+#' @param col_sd color of the sd bars
 #' @param type type of plot
 #' @param xaxt xaxt
 #' @param yaxt yaxt
@@ -26,8 +27,9 @@
 my_plot<-function(x,y,sd = NULL, sd_x = NULL, overlay = NULL,
                   ylab = NULL,xlab = NULL, ylim = NULL,xlim = NULL,
                   pch = NULL,bg = NULL, type = NULL, xaxt = NULL,
-                  yaxt = NULL,lty = NULL, col = NULL,
-                  cex = NULL, cex.axis = NULL, cex.lab = NULL, log = NULL){
+                  yaxt = NULL,lty = NULL, col = NULL,col_sd = NULL,
+                  cex = NULL, cex.axis = NULL, cex.lab = NULL,
+                  log = NULL){
 
   if (is.null(sd)==TRUE){
     sd <- 0
@@ -75,7 +77,11 @@ my_plot<-function(x,y,sd = NULL, sd_x = NULL, overlay = NULL,
     col <- col
   }
 
-
+  if (is.null(col_sd) == TRUE){
+    col_sd <- 1
+  }else{
+    col_sd <- col_sd
+  }
 
   if (is.null(lty)==TRUE){
     lty <- 1
@@ -101,15 +107,15 @@ if (is.null(overlay)==TRUE){
            pch = pch, bg = bg,type = type, col = col, lty = lty,
            xaxt = xaxt, yaxt = yaxt, cex = cex, cex.axis = cex.axis,
            cex.lab = cex.lab, log = log)
-      segments(x,y-sd,x,y+sd,col = bg)
-      segments(x-sd_x,y,x+sd_x,y,col = bg)
+      segments(x,y-sd,x,y+sd,col = col_sd)
+      segments(x-sd_x,y,x+sd_x,y,col = col_sd)
     }else{
       points(x,y,ylab=ylab,xlab=xlab,las=1,ylim = ylim, xlim = xlim,
              pch = pch, bg = bg, type = type, col = col, lty = lty,
              xaxt = xaxt, yaxt = yaxt, cex = cex , cex.axis = cex.axis,
-             cex.lab = cex.lab, log = log)
-      segments(x,y-sd,x,y+sd,col = bg)
-      segments(x-sd_x,y,x+sd_x,y,col = bg)
+             cex.lab = cex.lab)
+      segments(x,y-sd,x,y+sd,col = col_sd)
+      segments(x-sd_x,y,x+sd_x,y,col = col_sd)
     }
 
 
