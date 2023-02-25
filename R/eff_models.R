@@ -3,206 +3,263 @@
 #' @param light Light values (numeric vector)
 #' @param eff PSII quantum efficiency values (numeric vector)
 #' @param model parameter to select the model ("JP", "P", "EP")
-#' @param starting_values the starting values of the parameters to fit (list).
-#' @param num_obs Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps
-#' @param  plots Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.
-#' @param  alpha_lm Optional to estimate alpha from the first 2 points of the light curve. Default=FALSE
 #' @return The function returns a list with: 1- fitted parameters and respective; 2 - modeled light levels (numeric vector); 3- predicted ETR values (numeric vector).
 #' @keywords external
 #' @export
 fit_eff<-function(light,
                   eff,
-                  model,
-                  starting_values=NULL,
-                  num_obs=NULL,
-                  plots=TRUE,
-                  alpha_lm=FALSE)
+                  model
+                  )
 {
 
+#adding a small value if the curve starts at zero so that the fitting algorithm
+#doesn't fail
 
-  #Jassy & Platt model
+  if(light[1] == 0){
+    light <- light + 0.01
+  }else{
+    light <- light
+  }
+
+#constructing a df with the data
+  df <- as.data.frame(cbind(light,eff))
+  names(df) <- c('light','eff')
+
+#creating a new x-axis for the prediction line
+  x2 <- seq(min(light),max(light), by = 10)
+
+
+#####################################################################
+#Jassy & Platt model
   #Jassby & Platt model selected
   if(model == 'JP'){
-    if (is.null(starting_values)==TRUE){
-      starting_values=list(alpha = 0.3, Ek = 40)
-    }
-    my.res<-tryCatch({
-      minpack.lm::nlsLM(eff ~ alpha * Ek * tanh(light * Ek^{-1}) * light^{-1},
-                        start=starting_values, trace=F,  algorithm = "port", lower = c(0,0),
-                        control=stats::nls.control(maxiter=1024))
-    },error=function(e){NaN}
-    )
 
-   # alpha * Ek * tanh(light * Ek^{-1}) * light^{-1}
+    fit <- minpack.lm::nlsLM(eff ~ alpha * Ek * tanh(light * Ek^{-1}) * light^{-1},start = list(alpha = 0.5, Ek = 40),
+                             trace=F, data = df)
 
+    alpha <- summary(fit)$coefficients[1]
+    Ek <- summary(fit)$coefficients[2]
+    ETRmax <- Ek/alpha
 
+#plotting section
 
+    nf<-graphics::layout(matrix(1:2,nrow=2,ncol=1,byrow=TRUE))
 
-    if(!is.na(my.res[1])){
-      coefs <- stats::coef(my.res)
-      my.alpha <- as.numeric(coefs[1])
-      my.etrmax <- as.numeric(coefs[2])
+    graphics::par(oma=c(4,4,3,4),mar=c(0,0,0,0), xpd=NA,tcl=-0.3,bg="white",cex=0.8,cex.axis=0.9,cex.lab=0.9,bty="o",las=1,mgp=c(3,0.5,0),adj=0.5)
 
-      #run predict to get fit line
-      new.dat <- data.frame(light=seq(0,max(light), by=1))
-      #print(new.dat$light)
-      pred <- stats::predict(my.res, newdata=new.dat)
-      #print(pred)
+    plot(light,eff,pch=21,xlab="Light",ylab="PSII",las=1,bg=1)
+    lines(x2,alpha * Ek * tanh(x2 * Ek^{-1}) * x2^{-1},col="red",lwd=2)
 
-      #make available
-      app.data$alpha <- my.alpha
-      app.data$etrmax <- my.etrmax
-      app.data$Ek <- my.etrmax/my.alpha
-      app.data$pred.par <- new.dat$light
-      app.data$pred <- pred
-    }
-  }#end of if
+    legend("topright", legend = c('model = JP' ,
+                                  paste("alpha = ", round(alpha,2)),
+                                  paste("ETRmax = ", round(ETRmax,0)),
+                                  paste("Ek = ",round(Ek,0))))
 
 
-  ################################################################################
+
+    parameters <- as.data.frame(cbind(    round(alpha,2),
+                                          round(ETRmax,0),
+                                          round(Ek,0)))
+
+    #plotting the ETR estimation based on the fitted model
+    rETR <- light*eff
+    plot(light,rETR,xlab="",ylab="rETR",las=1, pch=21, bg=1,
+         xaxt ='n')
+
+    #pred_etr <- ETRmax * tanh((alpha * x2) / ETRmax)
+
+    pred_etr <- alpha * Ek * tanh(x2/Ek)
+
+    lines(x2,pred_etr,col="red",lwd=2)
+
+
+
+
+    # constructing the output
+    names(parameters) <- c('alpha', 'ETRmax', 'Ek')
+    model <- fit
+
+
+  }#end of if JP
+
+
+#####################################################################
 
   #Platt et al model
-  if(model == 'P'){
-    if (is.null(starting_values)==TRUE){
-      starting_values=list(alpha = 0.2, Ps = 2000, beta=0)
-    }
-
-    my.res <- tryCatch({
-      minpack.lm::nlsLM(eff~((Ps/light)*(1-exp((-light*alpha)/Ps))*exp((-light*beta)/Ps)),
-                        start = starting_values, algorithm = "port",
-                        trace = F, control = stats::nls.control(maxiter=1024),
-                        lower = c(0,0,0))
-    }, error = function(e) {NaN} )
+  else if (model == 'P'){
 
 
-    #(Ps/light)*(1-exp((-light*alpha)/Ps))*exp((-light*beta)/Ps)
+    # fit <- minpack.lm::nlsLM(eff~((Ps/light)*(1-exp((-light*alpha)/Ps))*exp((-light*beta)/Ps)),
+    #                          start = list(alpha = 0.2, Ps = 1500, beta=0),trace = F, lower = c(0,0,0), data =df)
 
-    #extract parameters
-    if(!is.na(my.res[1])){
-      coefs <- stats::coef(my.res)
+    fit <- minpack.lm::nlsLM(eff~ Ps * (1 - exp(-alpha * light * Ps^{-1}) * exp(-beta * light * Ps^{-1})) * light^{-1},
+                             start = list(alpha = 0.2, Ps = 15000, beta=0),trace = F, lower = c(0,0,0), data =df)
 
-      my.alpha <- as.numeric(coefs[1])
-      my.ps <- as.numeric(coefs[2])
-      my.beta <- as.numeric(coefs[3])
 
-      #run predict to get fit line
-      new.dat <- data.frame(light=seq(0,max(light), by=1))
-      #print(new.dat$light)
-      pred <- stats::predict(my.res, newdata=new.dat)
-      #print(pred)
+    alpha <- summary(fit)$coefficients[1]
+    Ps <- summary(fit)$coefficients[2]
+    beta <- summary(fit)$coefficients[3]
+    ETRmax <- Ps*(alpha/(alpha + beta))*(beta/(alpha + beta))^(beta/alpha)
+    ETRmax <- Ek/alpha
 
-      #make available
-      app.data$alpha <- my.alpha
-      print(my.alpha)
-      app.data$ps <- my.ps
-      app.data$beta <- my.beta
-      app.data$etrmax <- my.ps*(my.alpha/(my.alpha+my.beta))*(my.beta/(my.alpha+my.beta))^(my.beta/my.alpha)
-      app.data$Ek <- app.data$etrmax/my.alpha
 
-      app.data$pred.par <- new.dat$light
-      app.data$pred <- pred
-    }
+#plotting section
+nf<-graphics::layout(matrix(1:2,nrow=2,ncol=1,byrow=TRUE))
+
+    graphics::par(oma=c(4,4,3,4),mar=c(0,0,0,0), xpd=NA,tcl=-0.3,bg="white",cex=0.8,cex.axis=0.9,cex.lab=0.9,bty="o",las=1,mgp=c(3,0.5,0),adj=0.5)
+
+    plot(light,eff,pch=21,xlab="",ylab="PSII",las=1,bg=1, xaxt = 'n')
+    #lines(x2,((Ps/x2)*(1-exp((-x2*alpha)/Ps))*exp((-x2*beta)))/x2,col="red",lwd=2)
+    lines(x2,Ps * (1 - exp(-alpha * x2 * Ps^{-1}) * exp(-beta * x2 * Ps^{-1})) * x2^{-1},col="red",lwd=2)
+
+    legend("topright", legend = c('model = P' ,
+                                  paste("alpha = ", round(alpha,2)),
+                                  paste("ETRmax = ", round(ETRmax,0)),
+                                  paste("Ek = ",round(Ek,0))),
+                                  paste("beta = ",round(beta,0)))
+
+
+
+    parameters <- as.data.frame(cbind(    round(alpha,2),
+                                          round(ETRmax,0),
+                                          round(beta,0),
+                                          round(Ek,0)))
+    #plotting the ETR estimation based on the fitted model
+    rETR <- light*eff
+    plot(light,rETR,xlab="Ligth",ylab="rETR",las=1, pch=21, bg=1)
+
+    pred_etr <- Ps * (1 - exp(-alpha * x2 * Ps^{-1}) * exp(-beta * x2 * Ps^{-1}))
+
+    lines(x2,pred_etr,col="red",lwd=2)
+
+
+
+    # constructing the output
+    names(parameters) <- c('alpha', 'ETRmax' ,'beta', 'Ek')
+
+    model <- fit
+
 
   }
-  #end of platt model if
+  #end of if platt model
 
-  ################################################################################
-  #Eilers Petters model
+#####################################################################
 
-  #based on a, b, c
-  if(model == 'EP'){
+#Eilers Petters model
 
-    if (is.null(starting_values)==TRUE){
-      starting_values=list(a = 0.0001, b = 0.01, c = 1)
-    }
+  else if(model == 'EP'){
 
-    my.res <- tryCatch({
-      minpack.lm::nlsLM(eff~1/(a*light^2+b*light+c),start=starting_values,
-                        algorithm="port", trace=T,
-                        control=stats::nls.control(maxiter=1024),lower=c(0,0,0))
-    },error=function(e){NaN}
-    )
+    fit <- minpack.lm::nlsLM(eff~1/(((alpha * Eopt^2)^{-1})*light^2+ (ETRmax^{-1} - 2 * (alpha * Eopt)^{-1})*light+(alpha^{-1})),data = df,
+                             start=list(alpha = 0.4,Eopt = 90,ETRmax = 30),trace = F)
 
+    alpha <- summary(fit)$coefficients[1]
+    Eopt <- summary(fit)$coefficients[2]
+    ETRmax <- summary(fit)$coefficients[3]
+    Ek <- ETRmax/alpha
 
+#Plotting section
 
-    if(!is.na(my.res[1])){
-      coefs <- stats::coef(my.res)
+ nf<-graphics::layout(matrix(1:2,nrow=2,ncol=1,byrow=TRUE))
 
-      my.a <- as.numeric(coefs[1])
-      my.b <- as.numeric(coefs[2])
-      my.c <- as.numeric(coefs[3])
+    graphics::par(oma=c(4,4,3,4),mar=c(0,0,0,0), xpd=NA,tcl=-0.3,bg="white",cex=0.8,cex.axis=0.9,cex.lab=0.9,bty="o",las=1,mgp=c(3,0.5,0),adj=0.5)
 
-      #transform the parameters a,b and c in alpha, etrmax, eopt
-      my.alpha<-(1/my.c)
-      my.etrmax<-1/(my.b+2*(my.a*my.c)^0.5)
-      my.eopt<-(my.c/my.a)^0.5
+    plot(light,eff,pch=21,xlab = "",ylab="PSII",las=1,bg=1,xaxt = 'n')
 
+    lines(x2,1/(((alpha * Eopt^2)^{-1})*x2^2+ (ETRmax^{-1} - 2 * (alpha * Eopt)^{-1})*x2+(alpha^{-1})),col="red",lwd=2)
+
+    legend("topright", legend = c('model = EP' ,
+                                  paste("alpha = ", round(alpha,2)),
+                                  paste("ETRmax = ", round(ETRmax,0)),
+                                  paste("Eopt = ",round(Eopt,0)),
+                                  paste("Ek = ",round(Ek,0))))
 
 
-      #run predict to get fit line
-      new.dat <- data.frame(light=seq(0,max(light), by=1))
-      #print(new.dat$light)
-      pred <- stats::predict(my.res, newdata=new.dat)
-      #print(pred)
+    parameters <- as.data.frame(cbind(    round(alpha,2),
+                                          round(ETRmax,0),
+                                          round(Eopt,0),
+                                          round(Ek,0))
+                                )
 
-      #make available
-      app.data$alpha <- my.alpha
-      app.data$etrmax <- my.etrmax
-      app.data$eopt <- my.eopt
-      app.data$Ek <- my.etrmax/my.alpha
-      app.data$pred.par <- new.dat$light
-      app.data$pred <- pred
-    }
+#plotting the ETR estimation based on the fitted model
+    rETR <- light*eff
+    plot(light,rETR,xlab="Light",ylab="rETR",las=1, pch=21, bg=1)
+
+    pred_etr <- x2/(x2^2*(1/(alpha*Eopt^2))+(x2/ETRmax)-((2*x2)/(alpha*Eopt))+(1/alpha))
+
+    lines(x2,pred_etr,col="red",lwd=2)
+
+
+
+#output section
+    names(parameters) <- c("alpha","ETRmax","Eopt","Ek")
+    model <- fit
   }
 
 
 
-  ################################################################################
+#####################################################################
 
   #Webber?
+  else if(model == 'W'){
+
+    fit <- minpack.lm::nlsLM(eff ~ alpha * Ek * (1 - exp(-light * Ek)) * light^{-1},data = df,start=list(alpha = 0.4,Ek = 500),trace = F)
+
+
+    alpha <- summary(fit)$coefficients[1]
+    Ek <- summary(fit)$coefficients[2]
+    ETRmax <- Ek*alpha
+
+#plotting section
+    nf<-graphics::layout(matrix(1:2,nrow=2,ncol=1,byrow=TRUE))
+
+    graphics::par(oma=c(4,4,3,4),mar=c(0,0,0,0), xpd=NA,tcl=-0.3,bg="white",cex=0.8,cex.axis=0.9,cex.lab=0.9,bty="o",las=1,mgp=c(3,0.5,0),adj=0.5)
+    #
+    plot(light,eff,pch=21,xlab="Light",ylab="PSII",las=1,bg=1)
+
+
+    lines(x2, alpha * Ek * (1 - exp(-x2 * Ek)) * x2^{-1},col="red",lwd=2)
+
+    legend("topright", legend = c('model = W' ,
+                                  paste("alpha = ", round(alpha,2)),
+                                  paste("ETRmax = ", round(ETRmax,0)),
+                                  paste("Ek = ",round(Ek,0))))
+
+
+    #plotting the ETR estimation based on the fitted model
+     rETR <- light*eff
+     plot(light,rETR,xlab="Light",ylab="rETR",las=1, pch=21, bg=1)
+
+pred_etr <- alpha * Ek * (1 - exp(-x2 * Ek))
+
+
+lines(x2,pred_etr,col="red",lwd=2)
+
+
+#output
+    parameters <- as.data.frame(cbind(    round(alpha,2),
+                                          round(ETRmax,0),
+                                          round(Ek,0))
+    )
+    model <- fit
+
+}
+#####################################################################
+
+# if(is.na(my.res[1])==TRUE){
+#     print("The model did not converge, please choose different starting values")
+#   }
+
+######################################################################
+##Return results
+######################################################################
 
 
 
+  output <- list(parameters, model)
 
+  names(output) <- c('parameters', 'model')
 
-  ################################################################################
-
-  if(is.na(my.res[1])==TRUE){
-    print("The model did not converge, please choose different starting values")
-  }
-
-  #app.data<<-app.data
-
-
-
-  ################################################################################
-  ##Plotting section
-  ################################################################################
-  if (plots==TRUE){
-    plot(light,eff,pch=21,bg=1,las=1)
-    points(app.data$pred.par,app.data$pred,type='l',col=2,lwd=2)
-  }
-
-  #add the parameters to the plot if the model converged
-
-  if(is.na(my.res[1])==FALSE){
-    legend("topright",legend = c(paste("alpha = ",round(app.data$alpha,2)),
-                                    paste("ETRmax = ",round(app.data$etrmax,0)),
-                                    paste("Ek = ",round(app.data$Ek,0)))
-           ,bty="n")
-  }else{
-    legend("bottomright",legend ="The model did not converge, please choose different starting values"
-           ,bty="n",cex=0.7)
-  }
-
-
-  ################################################################################
-  ##Return results
-  ################################################################################
-
-  if(is.na(my.res[1])==FALSE){
-    return(app.data)
-  }
+  return(output)
 
 
 
