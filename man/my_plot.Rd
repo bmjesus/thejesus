@@ -8,6 +8,7 @@ my_plot(
   x,
   y,
   sd = NULL,
+  sd_x = NULL,
   overlay = NULL,
   ylab = NULL,
   xlab = NULL,
@@ -19,7 +20,12 @@ my_plot(
   xaxt = NULL,
   yaxt = NULL,
   lty = NULL,
-  col = NULL
+  col = NULL,
+  col_sd = NULL,
+  cex = NULL,
+  cex.axis = NULL,
+  cex.lab = NULL,
+  log = NULL
 )
 }
 \arguments{
@@ -28,6 +34,8 @@ my_plot(
 \item{y}{y}
 
 \item{sd}{numerical vector with the dispersion measurement to plot}
+
+\item{sd_x}{numerical vector with the dispersion measurement in the x-axis to plot}
 
 \item{overlay}{logical, if TRUE then the function "points" is used instead of "plot"}
 
@@ -52,6 +60,16 @@ my_plot(
 \item{lty}{type of line}
 
 \item{col}{color of the symbol}
+
+\item{col_sd}{color of the sd bars}
+
+\item{cex}{cex}
+
+\item{cex.axis}{cex.axis}
+
+\item{cex.lab}{cex.lab}
+
+\item{log}{log}
 }
 \value{
 plots a x,y plot with sd bars

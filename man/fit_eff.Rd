@@ -4,15 +4,7 @@
 \alias{fit_eff}
 \title{Function to fit PI models using PSII efficiency data and extract fitting parameters}
 \usage{
-fit_eff(
-  light,
-  eff,
-  model,
-  starting_values = NULL,
-  num_obs = NULL,
-  plots = TRUE,
-  alpha_lm = FALSE
-)
+fit_eff(light, eff, model)
 }
 \arguments{
 \item{light}{Light values (numeric vector)}
@@ -20,14 +12,6 @@ fit_eff(
 \item{eff}{PSII quantum efficiency values (numeric vector)}
 
 \item{model}{parameter to select the model ("JP", "P", "EP")}
-
-\item{starting_values}{the starting values of the parameters to fit (list).}
-
-\item{num_obs}{Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps}
-
-\item{plots}{Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.}
-
-\item{alpha_lm}{Optional to estimate alpha from the first 2 points of the light curve. Default=FALSE}
 }
 \value{
 The function returns a list with: 1- fitted parameters and respective; 2 - modeled light levels (numeric vector); 3- predicted ETR values (numeric vector).

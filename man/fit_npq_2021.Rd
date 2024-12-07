@@ -9,7 +9,8 @@ fit_npq_2021(
   npq,
   starting_values = NULL,
   num_obs = NULL,
-  limit_npq_max = FALSE
+  limit_npq_max = FALSE,
+  plots = TRUE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fit_npq_2021(
 \item{num_obs}{Number of observations to fit the model (optional), if nothing is defined it will use the number of light steps}
 
 \item{limit_npq_max}{when deling with YNPQ data the NPQmax parameter should be limited to 1 by turning this parameter to TRUE (default is FALSE)}
+
+\item{plots}{Turns on and off plotting of data and fitted curves (TRUE, FALSE). Default is TRUE.}
 }
 \value{
 The function returns a list with: 1- par and NPQ values of the fitted model; 2 - fitted parameters

@@ -12,7 +12,8 @@ Imports:
     minpack.lm,
     stats,
     lubridate,
-    tidyr
+    tidyr,
+    shiny
 Collate:
     'etr_models.R'
     'eff_models.R'
@@ -28,7 +29,8 @@ Collate:
     'my_plot.R'
     'rlc_preview_plots.R'
     'integral.R'
-RoxygenNote: 7.1.2
+    'rlc_fit.R'
+RoxygenNote: 7.3.1
 Roxygen: list(markdown = TRUE)
 Suggests: 
     testthat,

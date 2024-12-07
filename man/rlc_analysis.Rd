@@ -4,11 +4,7 @@
 \alias{rlc_analysis}
 \title{function to fit several PI models}
 \usage{
-rlc_analysis(
-  x,
-  starting_values = list(alpha = 0.5, Eopt = 500, etrmax = 100),
-  model = NULL
-)
+rlc_analysis(x, starting_values = NULL, model = NULL)
 }
 \arguments{
 \item{x}{rlc object from the process_psi() function}
