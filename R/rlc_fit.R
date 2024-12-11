@@ -9,7 +9,6 @@ rlc_fit<- function(){
 
 library(shiny)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
 
    # Application title
@@ -39,6 +38,10 @@ ui <- fluidPage(
    ),
 
    textInput("data_range", "Data range"),
+
+   radioButtons("etr_model", "Chose fitting model:",
+                c("Platt et al" = "P",
+                  "Eilers Petters" = "EP")),
 
    actionButton("calculate","Fit the models"),
 
@@ -196,20 +199,35 @@ ynpq <- eventReactive(input$calculate,{
 }
 )
 
-#section to fit an ETR model
-fit_etr <- eventReactive(input$calculate,{
+#section to fit P model
+fit_etr_P <- eventReactive(input$calculate,{
+
+  req(light(),etr(), input$file)
 
   output <- thejesus::fit_etr(light = light(), etr = etr(),
                     model = 'P', plots = FALSE)
 
+  return(output)
+} )
+
+#section to fit EP model
+fit_etr_EP <- eventReactive(input$calculate,{
+
+  req(light(),etr(), input$file)
+
+  output <- thejesus::fit_etr(light = light(), etr = etr(),model = 'EP', plots = FALSE)
 
   return(output)
-}
-  )
+})
+
+
+
 
 #section to estimate alpha and Ek using the slope of the first 3 points
 
 parameters_lm <- eventReactive(input$calculate,{
+
+  req(etr(),input$file)
 
 a_lm <- lm(etr()[1:3]~light()[1:3])
 
@@ -223,12 +241,16 @@ return(b_lm)
 #section to fit a NPQ model to the variable NPQ
 fit_npq <- eventReactive(input$calculate,{
 
+  req(input$file)
+
   thejesus::fit_npq_2011 (light = light(), npq = npq(),plots = FALSE)
 }
 )
 
 #section to fit a NPQ model to the variable YNPQ
 fit_ynpq <- eventReactive(input$calculate,{
+
+  req(input$file)
 
   thejesus::fit_npq_2011 (light = light(), npq = ynpq(),plots = FALSE)
 }
@@ -239,7 +261,9 @@ fit_ynpq <- eventReactive(input$calculate,{
 output$plot_etr <- renderPlot({
 
   # Make sure requirements are met
-  req(input$calculate, light(), etr())
+  req(input$calculate,input$file, light(), etr(),f(),fm(),fit_etr_P())
+
+if (input$etr_model=="P"){
 
   plot(light(),
        #unlist(data()[data()$salinity == as.character(input$rlc),5]),
@@ -248,11 +272,25 @@ output$plot_etr <- renderPlot({
 
   #print(fit_etr())
 
-  if (is.null(fit_etr()$pred.par) == FALSE){
-    points(fit_etr()$pred.par,fit_etr()$pred,
+  if (is.null(fit_etr_P()$pred.par) == FALSE){
+    points(fit_etr_P()$pred.par,fit_etr_P()$pred,
            type = 'l', col = 2, lwd = 2)
     }
+}else{
+  plot(light(),
+       #unlist(data()[data()$salinity == as.character(input$rlc),5]),
+       etr(),
+       ylab = "rETR", xlab = "Light", pch =21, bg = 1, las = 1)
 
+  #print(fit_etr())
+
+  if (is.null(fit_etr_EP()$pred.par) == FALSE){
+    points(fit_etr_EP()$pred.par,fit_etr_EP()$pred,
+           type = 'l', col = 2, lwd = 2)
+
+}
+
+}
 
 },res = 96)
 
@@ -261,7 +299,7 @@ output$plot_etr <- renderPlot({
 
 output$plot_npq <- renderPlot({
 
-  req(input$calculate, light(), npq())
+  req(input$calculate,input$file, light(), npq(),f(),fm(),fit_npq())
 
 if (input$npq_type=="npq"){
 
@@ -293,7 +331,7 @@ plot(light(),
 
 output$npq_table <- renderTable({
 
-  req(input$calculate)
+  req(input$calculate,input$file)
 
   if (input$npq_type=="npq"){
   fit_npq()$parameters
@@ -302,30 +340,86 @@ output$npq_table <- renderTable({
     }
   })
 
-#Constructing a table for the ETR Platt model outputs
+
+etr_table <- reactive({
+
+#constructing a table
+
+    req(input$calculate,input$file)
+
+    # choosing the model
+    if (input$etr_model == 'P'){
+
+      table_etr <- as.data.frame(
+
+        cbind(
+          fit_etr_P()$alpha,
+          fit_etr_P()$etrmax,
+          fit_etr_P()$Ek ,
+          fit_etr_P()$beta
+        ))
+      names(table_etr) <- c("Alpha","rETRmax","Ek", "Beta")
+      return(table_etr)
+
+    }else{
+
+      table_etr <- as.data.frame(
+
+        cbind(
+          fit_etr_EP()$alpha,
+          fit_etr_EP()$etrmax,
+          fit_etr_EP()$Ek))
+      names(table_etr) <- c("Alpha","rETRmax","Ek")
+
+      return(table_etr)
+
+    }
+
+}
+
+)
+
+
+#Constructing a table for the ETR model outputs
 output$table_etr <- renderTable({
 
-  req(input$calculate)
+  req(input$calculate,input$file)
 
-table_etr <- as.data.frame(
+  etr_table()
 
-  cbind(
-  fit_etr()$alpha,
-  fit_etr()$etrmax,
-  fit_etr()$Ek ,
-  fit_etr()$beta
-))
+}
 
-  names(table_etr) <- c("Alpha","rETRmax","Ek", "Beta")
-  return(table_etr)
+)
 
-})
+#calculating the Ek slope for the two models
+Ek_P <- eventReactive(input$calculate,{
 
+  req(input$file)
+
+  return(fit_etr_P()$etrmax/parameters_lm())
+
+} )
+
+Ek_EP <- eventReactive(input$calculate,{
+
+  req(input$file)
+
+  return(fit_etr_EP()$etrmax/parameters_lm())
+
+} )
+
+#Output table slope parameters
 output$table_slope_parameters <- renderTable({
 
-  Ek_slope <- fit_etr()$etrmax/parameters_lm()
+  req(input$calculate,input$file)
 
-  alpha_lm_temp <- as.data.frame(cbind(parameters_lm(), Ek_slope))
+  if (input$etr_model == 'P'){
+    Ek_slope <- Ek_P()
+  }else{
+    Ek_slope <- Ek_EP()
+  }
+
+  alpha_lm_temp <<- as.data.frame(cbind(parameters_lm(), Ek_slope))
 
   names(alpha_lm_temp) <- c("Alpha slope", "Ek slope")
 
