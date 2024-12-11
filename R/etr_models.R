@@ -136,10 +136,10 @@ if(model == 'EP'){
   }else{
     starting_values = list(
       summary(lm(df_data$etr[2:3]~df_data$light[2:3]))$coefficients[2],
-      max(df_data$etr),
-      df_data$light[df_data$etr == max(df_data$etr)]
+      df_data$light[df_data$etr == max(df_data$etr)],
+      max(df_data$etr)
     )
-    names(starting_values) <- c("alpha","etrmax","Eopt")
+    names(starting_values) <- c("alpha","Eopt","etrmax")
   }
 
   my.res <- tryCatch({

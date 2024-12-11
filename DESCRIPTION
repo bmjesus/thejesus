@@ -13,7 +13,8 @@ Imports:
     stats,
     lubridate,
     tidyr,
-    shiny
+    shiny,
+    vroom
 Collate:
     'etr_models.R'
     'eff_models.R'

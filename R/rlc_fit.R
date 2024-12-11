@@ -89,6 +89,7 @@ server <- function(input, output, session) {
 
   })
 
+
 #observes the event of loading the file so that the column names are loaded and the selection menus are filled
 observeEvent(input$file,{
 
@@ -238,9 +239,7 @@ fit_ynpq <- eventReactive(input$calculate,{
 output$plot_etr <- renderPlot({
 
   # Make sure requirements are met
-  req(input$calculate)
-
-  #eff <- unlist(data()[data()$salinity == as.character(input$replicate
+  req(input$calculate, light(), etr())
 
   plot(light(),
        #unlist(data()[data()$salinity == as.character(input$rlc),5]),
@@ -262,7 +261,7 @@ output$plot_etr <- renderPlot({
 
 output$plot_npq <- renderPlot({
 
-  req(input$calculate)
+  req(input$calculate, light(), npq())
 
 if (input$npq_type=="npq"){
 
@@ -291,7 +290,6 @@ plot(light(),
 
 
 #Constructing a table for the NPQ outputs
-
 
 output$npq_table <- renderTable({
 
