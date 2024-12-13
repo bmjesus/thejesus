@@ -356,9 +356,10 @@ etr_table <- reactive({
           fit_etr_P()$alpha,
           fit_etr_P()$etrmax,
           fit_etr_P()$Ek ,
-          fit_etr_P()$beta
+          fit_etr_P()$beta,
+          fit_etr_P()$ps
         ))
-      names(table_etr) <- c("Alpha","rETRmax","Ek", "Beta")
+      names(table_etr) <- c("Alpha","rETRmax","Ek", "Beta", "Ps")
       return(table_etr)
 
     }else{
