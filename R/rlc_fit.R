@@ -369,8 +369,9 @@ etr_table <- reactive({
         cbind(
           fit_etr_EP()$alpha,
           fit_etr_EP()$etrmax,
-          fit_etr_EP()$Ek))
-      names(table_etr) <- c("Alpha","rETRmax","Ek")
+          fit_etr_EP()$Ek,
+          fit_etr_EP()$eopt))
+      names(table_etr) <- c("Alpha","rETRmax","Ek","Eopt")
 
       return(table_etr)
 
