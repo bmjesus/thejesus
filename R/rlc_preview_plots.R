@@ -153,8 +153,10 @@ retr_ep_dark<-tryCatch({thejesus::fit_etr(par,retr[(1 + n_light):(n_light * 2)],
 ynpq_starting_values_model2011 <- list("NPQmax"= max(ynpq_light)
                                          ,"E50"= par/2,"hill"= 1)
 
-
-if (ynpqm_light[1]==0){
+ynpqm
+if (ynpqm[1]==0){
+#if (ynpqm_light[1]==0){
+    
   ynpq_m_2011_light<-tryCatch({thejesus::fit_npq_2011(par,ynpqm_light,
                                               starting_values = ynpq_starting_values_model2011, plots = FALSE)},error=function(e){
                                                 print("Error: could not fit model YNPQm 2011 light");
@@ -169,8 +171,8 @@ ynpq_m_2021_light<-NULL
 
 }
 
-if (ynpqm_light[1]!=0){
-
+if (ynpqm[1]!=0){
+#if (ynpqm_light[1]!=0){
 ynpq_m_2011_light<-NULL
 
   #YNPQ_m
@@ -237,13 +239,18 @@ legend("bottomright",legend=c(paste("Alpha = ",round(retr_ep_light$alpha,2))
 legend("topleft",legend=expression("rETR"),bty = "n", cex=1)
 
 #YNPQ model
-if (ynpqm_light[1]==0){
+
+plot(par,ynpqm_light,pch=21,bg=0, col = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",
+     ylim = c(0,max(na.omit(c(ynpqm_light,ynpqm_dark)))))
+points(par,ynpqm_dark,pch=21,bg=1, col = 1)
+
+if (ynpqm[1]==0){
 
   #print(ynpq_m_2021_light)
   if (is.null(ynpq_m_2011_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch = 21,bg = 0, ylab="YNPQ",xaxt = "n", yaxt = "n")
+    #plot(par,ynpqm_light,pch = 21,bg = 0, ylab="YNPQ",xaxt = "n", yaxt = "n")
     points(ynpq_m_2011_light$predicted$par,ynpq_m_2011_light$predicted$npq
            ,type="l",col=2)
     axis(4)
@@ -264,7 +271,7 @@ if (ynpqm_light[1]==0){
   if (is.null(ynpq_m_2021_light)==FALSE){
     #NPQ, model Serodio & Lavaud 2021
     #light step
-    plot(par,ynpqm_light,pch=21,bg=0, col = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
+    #plot(par,ynpqm_light,pch=21,bg=0, col = 1, ylab="YNPQ",xaxt = "n", yaxt = "n",ylim = c(0,max(na.omit(ynpqm_light))))
     points(ynpq_m_2021_light$predicted$par,ynpq_m_2021_light$predicted$npq
            ,type="l",col=1)
     axis(4)
