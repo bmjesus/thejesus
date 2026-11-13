@@ -87,6 +87,7 @@ if (plots==TRUE){
 
     #add the parameters to the plot if the model converged
 
+    if (plots == TRUE){
     if(is.na(my.res[1])==FALSE){
       legend("bottomright",legend = c(paste("NPQmax = ",round(app.data$npqmax,2)),
                                       paste("E50 = ",round(app.data$E50,0)),
@@ -95,6 +96,7 @@ if (plots==TRUE){
     }else{
       legend("bottomright",legend ="The model did not converge, please choose different starting values, or add more points to your dataset"
              ,bty="n",cex=0.9)
+    }
     }
 
 

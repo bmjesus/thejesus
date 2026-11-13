@@ -10,6 +10,11 @@ rlc_fit()
 It does not return any R object
 }
 \description{
-Function to lunch a shiny App that fits RLC models to fluorescence data
+Function to lunch a shiny App that fits RLC models to
+fluorescence data. The data file (.csv, .txt or .tsv; separated by ",", ";"
+or tabs; "." or "," as decimal separator) needs one column with the light
+(PAR), one with F and one with Fm, and optionally one column identifying
+each light curve. The app tries to recognise these columns from their names
+and the user can change the selection in the app.
 }
 \keyword{external}
